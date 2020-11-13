@@ -15,7 +15,7 @@ class NASASpider(SitemapSpider):
 
 
     def closed(self: "NASASpider", reason: str):
-        with open('nasa.txt', 'a') as f:
+        with open('nasa.txt', 'a', encoding='utf-8') as f:
             f.write('Articles crawled: ' + str(self.num_of_articles) + '\n')
         
     
@@ -29,7 +29,7 @@ class NASASpider(SitemapSpider):
         txt = str.join(' ', [s.strip() for s in txtlist])
 
         with open('nasa.txt', 'a', encoding='utf-8') as f:
-            f.write(str(self.num_of_articles) + '->' + title + '\n' + txt)
+            f.write(str(self.num_of_articles) + '-> ' + title + '\n' + txt)
             f.write('\n--------\n')
         
         self.num_of_articles += 1
