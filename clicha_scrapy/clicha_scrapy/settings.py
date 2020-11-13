@@ -1,4 +1,4 @@
-# Scrapy settings for testscrapy project
+# Scrapy settings for clicha_scrapy project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,14 +7,14 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'testscrapy'
+BOT_NAME = 'clicha_scrapy'
 
-SPIDER_MODULES = ['testscrapy.spiders']
-NEWSPIDER_MODULE = 'testscrapy.spiders'
+SPIDER_MODULES = ['clicha_scrapy.spiders']
+NEWSPIDER_MODULE = 'clicha_scrapy.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'testscrapy (+http://www.yourdomain.com)'
+#USER_AGENT = 'clicha_scrapy (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -45,13 +45,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'testscrapy.middlewares.TestscrapySpiderMiddleware': 543,
+#    'clicha_scrapy.middlewares.ClichaScrapySpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'testscrapy.middlewares.TestscrapyDownloaderMiddleware': 543,
+#    'clicha_scrapy.middlewares.ClichaScrapyDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -63,7 +63,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'testscrapy.pipelines.TestscrapyPipeline': 300,
+#    'clicha_scrapy.pipelines.ClichaScrapyPipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)

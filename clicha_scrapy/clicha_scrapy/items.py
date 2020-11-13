@@ -6,11 +6,6 @@
 import scrapy
 
 
-class TestscrapyItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    link = scrapy.Field()
-
 class ArticleItem(scrapy.Item):
     headline = scrapy.Field()
     content = scrapy.Field()
