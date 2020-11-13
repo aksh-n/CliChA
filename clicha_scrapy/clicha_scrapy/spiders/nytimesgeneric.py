@@ -5,7 +5,7 @@ from scrapy.http import Response, TextResponse
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from six import Iterator
-from testscrapy.items import ArticleItem, TestscrapyItem
+from clicha_scrapy.items import ArticleItem
 
 
 class NyTimesSpider(CrawlSpider):
