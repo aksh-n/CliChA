@@ -1,6 +1,11 @@
+import logging
 import scrapy
+from scrapy.http.request import Request
+
 from scrapy.spiders import SitemapSpider
 from scrapy.http import TextResponse
+from scrapy.utils.sitemap import Sitemap
+from scrapy.exceptions import CloseSpider
 
 
 class TStarSpider(SitemapSpider):
@@ -12,14 +17,46 @@ class TStarSpider(SitemapSpider):
 
     name = 'TStar'
     allowed_domains = ['www.thestar.com']
-    # this sitemap contains recent articles on Toronto Star
-    sitemap_urls = ['https://www.thestar.com/news-sitemap.xml']
+    # discovers sitemaps through robots.txt
+    sitemap_urls = ['https://www.thestar.com/robots.txt']
 
+    sitemap_rules = [('/web-sitemap/', '_parse_sitemap'), ('', 'parse')]
+
+    num_of_articles = 0
+    # the max number of articles to crawl
+    NUM_CAP = 15000
+    NUM_CAP_PER_SITEMAP = 300
+    
+
+    def closed(self: "TStarSpider", reason: str):
+        with open('tstar.txt', 'a', encoding='utf-8') as f:
+            f.write('Articles crawled: ' + str(self.num_of_articles) + '\n')
+
+    
     def parse(self: 'TStarSpider', response: TextResponse):
         """Parse each article to extract its text."""
-        txt = str.join('', response.xpath(
-            '//p[@class="text-block-container"]/text()').getall())
+        title = response.xpath('//h1[contains(@class, "headline")]/text()').get().strip()
+        txtlist = response.xpath(
+            '//p[contains(@class, "text-block-container")]/text()'
+        ).getall()
 
-        with open('tstar.txt', 'a') as f:
-            f.write(txt)
-            f.write('\n')
+        txt = str.join(' ', [s.strip() for s in txtlist])
+
+        with open('tstar.txt', 'a', encoding='utf-8') as f:
+            f.write(str(self.num_of_articles) + '-> ' + title + '\n' + txt)
+            f.write('\n--------\n')
+        
+        self.num_of_articles += 1
+        
+        if self.num_of_articles >= self.NUM_CAP:
+            raise CloseSpider('Max article limit reached')
+
+
+    def sitemap_filter(self: 'TStarSpider', entries: Sitemap):
+        count = 0
+        
+        for entry in entries:
+            if count <= self.NUM_CAP_PER_SITEMAP:
+                yield entry
+            count += 1
+        
