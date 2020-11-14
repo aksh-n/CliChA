@@ -3,7 +3,7 @@ from pprint import pprint
 from collections import Counter
 from math import log
 
-stop_list = ["Mr.", "Ms.", "Mrs.", "say", "'s"]
+stop_list = ["Mr.", "Ms.", "Mrs.", "say", "'s", "Dr."]
 nlp = spacy.load('en_core_web_sm', disable=["tagger", "parser", "ner"])
 nlp.Defaults.stop_words.update(stop_list)
 
@@ -50,8 +50,20 @@ def tf_idf(term: str, tf_dict: dict, idf_dict: dict) -> float:
     tf_dict is a term_frequency_dict of a single doc.
     idf_dict is a inverse_document_frequency_dict.
 
-    tf-idf(t)  = Term Frequecy(t) * Inverse Document Frequency(t)"""
+    tf-idf(t)  = Term Frequency(t) * Inverse Document Frequency(t)"""
+    if term not in idf_dict:
+        return 1000
     return tf_dict[term] * idf_dict[term]
+
+
+def tf_idf_dict(tf_dict: dict, idf_dict: dict) -> dict:
+    """Returns a dict in which each key is a term mapping to tf-idf(term).
+    tf_dict is a term_frequency_dict of a single doc.
+    idf_dict is a inverse_document_frequency_dict."""
+    tf_idf_dict = {}
+    for term in tf_dict.keys():
+        tf_idf_dict[term] = tf_idf(term, tf_dict, idf_dict)
+    return tf_idf_dict
 
 
 def highest_tf_idf(tf_dict: dict, idf_dict: dict) -> list:
