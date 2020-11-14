@@ -131,3 +131,7 @@ dmypy.json
 .idea/
 old_pycode.py
 log.txt
+climate_keywords/keywords_unedited_old2.txt
+climate_keywords/keywords_unedited_old.txt
+testscrapy/nasa_nosp.txt
+testscrapy/nasa_old.txt
