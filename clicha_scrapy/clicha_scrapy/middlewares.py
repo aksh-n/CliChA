@@ -7,6 +7,10 @@ from scrapy import signals
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
+from scrapy.exceptions import IgnoreRequest
+from scrapy.http import Request
+
+from clicha_scrapy.spiders.nytimestextg import NyTimesTextSpider
 
 
 class ClichaScrapySpiderMiddleware:
@@ -68,7 +72,7 @@ class ClichaScrapyDownloaderMiddleware:
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         return s
 
-    def process_request(self, request, spider):
+    def process_request(self, request: Request, spider: NyTimesTextSpider):
         # Called for each request that goes through the downloader
         # middleware.
 
@@ -78,7 +82,8 @@ class ClichaScrapyDownloaderMiddleware:
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
-        return None
+        if 'year' in request.meta and spider.num_counter[request.meta['year']] >= spider.NUM_PER_YEAR:
+            raise IgnoreRequest()
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.

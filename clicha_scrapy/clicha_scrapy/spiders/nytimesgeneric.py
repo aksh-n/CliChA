@@ -1,11 +1,10 @@
 import logging
 
 import scrapy
+from clicha_scrapy.items import ArticleItem
 from scrapy.http import Response, TextResponse
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
-from six import Iterator
-from clicha_scrapy.items import ArticleItem
 
 
 class NyTimesSpider(CrawlSpider):
@@ -14,6 +13,9 @@ class NyTimesSpider(CrawlSpider):
     This crawler crawls ALL the available articles listed on the NYTimes
     sitemap. It then extracts their titles and saves them in a separate file
     for each year.
+
+    Call this crawler by using typing "scrapy crawl nytimes -a start=START -a end=END", where
+    START and END should be replaced by the desired starting and ending years.
     """
     name = 'nytimes'
     allowed_domains = ['nytimes.com']
