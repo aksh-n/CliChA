@@ -27,7 +27,7 @@ class NyTimesTextSpider(CrawlSpider):
     # keeps track of the number of articles already crawled for each year
     num_counter = {}
     # the number of articles to crawl from each year
-    NUM_PER_YEAR = 500
+    NUM_PER_YEAR = 1500
 
     def start_requests(self):
         # supply command-line arguments with -a
