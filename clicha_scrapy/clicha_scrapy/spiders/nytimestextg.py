@@ -1,6 +1,7 @@
 import os
 import logging
 import scrapy
+from random import randint
 from scrapy.exceptions import CloseSpider
 from clicha_scrapy.items import ArticleItem
 from scrapy.http import Response, TextResponse
@@ -45,8 +46,9 @@ class NyTimesTextSpider(CrawlSpider):
         if self.num_counter[year] >= self.NUM_PER_YEAR:
             return
                    
+        # set priority to 10 to always process these first
         for a in response.xpath('//div[contains(@class, "articlesMonth")]/ul/li/a'):
-            yield response.follow(a, callback=self.parse_articles, cb_kwargs={'year': year})
+            yield response.follow(a, priority=10, callback=self.parse_articles, cb_kwargs={'year': year})
 
 
     def parse_articles(self, response: TextResponse, year: int):
@@ -57,7 +59,11 @@ class NyTimesTextSpider(CrawlSpider):
         for a in response.xpath('//ul[@id="headlines"]/li/a'):
             # the meta component is used by the middleware te decide
             # whether or not to drop the request based on articles already processed
-            yield response.follow(a, callback=self.parse_article, meta={'year': year}, cb_kwargs={'year': year})
+            yield response.follow(a,
+                                    callback=self.parse_article,
+                                    priority=randint(0, 9),
+                                    meta={'year': year},
+                                    cb_kwargs={'year': year})
 
 
     def parse_article(self: "NyTimesTextSpider", response: TextResponse, year: int):
@@ -66,12 +72,11 @@ class NyTimesTextSpider(CrawlSpider):
 
         headline = response.xpath('//h1[@itemprop="headline"]/text()').get().strip()
         txtlist = response.xpath('//section[contains(@name, "articleBody")]//p/text()').getall()
-        time = response.xpath('//header//time/text()').get()
+        # time = response.xpath('//header//time/text()').get()
         txt = str.join(' ', [s.strip() for s in txtlist])
 
-        with open(f'./nytimestext/{year}.txt', 'a') as f:
-            # TODO delete the timestamp
-            f.write(time + '-> ' + str(self.num_counter[year]) + '-> ' + headline + '\n' + txt)
+        with open(f'./nytimestext/{year}.txt', 'a', encoding='utf-8') as f:
+            f.write(str(self.num_counter[year]) + '-> ' + headline + '\n' + txt)
             f.write('\n--------\n')
 
         self.num_counter[year] += 1

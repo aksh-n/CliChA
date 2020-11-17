@@ -49,6 +49,6 @@ class NyTimesSpider(CrawlSpider):
         item['headline'] = response.xpath(
             '//h1[@itemprop="headline"]/text()').get()
 
-        with open(f'./nytimes/{year}.txt', 'a') as f:
+        with open(f'./nytimes/{year}.txt', 'a', encoding='utf-8') as f:
             f.write(item['headline'].strip())
             f.write('\n')
