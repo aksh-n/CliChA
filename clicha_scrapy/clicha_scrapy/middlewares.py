@@ -82,6 +82,7 @@ class ClichaScrapyDownloaderMiddleware:
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
+
         if 'year' in request.meta and spider.num_counter[request.meta['year']] >= spider.NUM_PER_YEAR:
             raise IgnoreRequest()
 

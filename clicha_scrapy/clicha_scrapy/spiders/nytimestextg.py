@@ -1,5 +1,6 @@
 import os
 import logging
+from os import error
 import scrapy
 from random import randint
 from scrapy.exceptions import CloseSpider
@@ -17,7 +18,9 @@ class NyTimesTextSpider(CrawlSpider):
     """
 
     name = 'nytimestext'
-    allowed_domains = ['nytimes.com']
+    allowed_domains = ['spiderbites.nytimes.com', 'www.nytimes.com']
+    # uncomment this if needing all nytimes articles
+    # allowed_domains = ['nytimes.com']
 
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {'clicha_scrapy.middlewares.ClichaScrapyDownloaderMiddleware': 000}
@@ -70,12 +73,23 @@ class NyTimesTextSpider(CrawlSpider):
         if self.num_counter[year] >= self.NUM_PER_YEAR:
             return
 
-        headline = response.xpath('//h1[@itemprop="headline"]/text()').get().strip()
+        headline = response.xpath('//h1[@itemprop="headline"]/text()').get()
+
+        # exclude CN nytimes pages
+        if headline is None:
+            return
+        else:
+            headline = headline.strip()
+
         txtlist = response.xpath('//section[contains(@name, "articleBody")]//p/text()').getall()
-        # time = response.xpath('//header//time/text()').get()
         txt = str.join(' ', [s.strip() for s in txtlist])
 
-        with open(f'./nytimestext/{year}.txt', 'a', encoding='utf-8') as f:
+        # don't write to file if body is empty or contains only whitespace
+        if not txt or txt.isspace():
+            return
+
+        # have to manually set encoding to bypass windows locale
+        with open(f'./nytimestext/{year}.txt', 'a', encoding='utf-8', errors="ignore") as f:
             f.write(str(self.num_counter[year]) + '-> ' + headline + '\n' + txt)
             f.write('\n--------\n')
 
