@@ -20,7 +20,7 @@ class NyTimesSpider(CrawlSpider):
     name = 'nytimes'
     allowed_domains = ['nytimes.com']
 
-    start_url = 'https://spiderbites.nytimes.com'
+    origin = 'https://spiderbites.nytimes.com'
 
     def start_requests(self):
         # supply command-line arguments with -a
@@ -28,7 +28,7 @@ class NyTimesSpider(CrawlSpider):
         end_year = int(getattr(self, 'end'))
 
         for i in range(start_year, end_year + 1):
-            url = self.start_url + '/' + str(i) + '/'
+            url = self.origin + '/' + str(i) + '/'
             yield scrapy.Request(url=url, callback=self.parse, cb_kwargs={'year': i})
 
 
