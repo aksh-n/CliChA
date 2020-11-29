@@ -4,8 +4,10 @@ from collections import Counter
 from math import log
 
 stop_list = ["Mr.", "Ms.", "Mrs.", "say", "'s", "Dr."]
-nlp = spacy.load('en_core_web_sm', disable=["tagger", "parser", "ner"])
+nlp = spacy.load('en_core_web_sm', disable=["tagger","parser", "ner"])
+phrase_nlp = spacy.load('en_core_web_sm', disable=["ner"])
 nlp.Defaults.stop_words.update(stop_list)
+phrase_nlp.Defaults.stop_words.update(stop_list)
 
 
 def doc_from_text(filename: str) -> spacy.tokens.Doc:
@@ -17,11 +19,23 @@ def doc_from_text(filename: str) -> spacy.tokens.Doc:
     return doc
 
 
-def list_doc_from_text(filename: str, div_n: int = 1000) -> spacy.tokens.Doc:
-    """Returns a list of Doc objects from the text in filename."""
+def list_doc_from_text(filename: str, num: int=-1, tagging=False) -> spacy.tokens.Doc:
+    """Returns a list of first num Doc objects from the text in filename.
+    
+    If num is None, then all Doc objects from the text are returned.
+    """
     with open(filename, 'r') as f:
         texts = f.read().split("--------")
-    docs = list(nlp.pipe(texts))
+    if num != -1:
+        texts = texts[:num]
+    else: 
+        num = len(texts)
+    if tagging:
+        docs = []
+        for i in range((num // 100) + 1):  # to prevent excess memory consumption and termination of task.
+            docs += list(phrase_nlp.pipe(texts[i * 100: (i + 1) * 100]))
+    else:
+        docs = list(nlp.pipe(texts))
     return docs
 
 
@@ -124,12 +138,15 @@ def preprocess_token(token: spacy.tokens.Token) -> str:
     return token.lemma_.strip().lower()
 
 
-def phrase_matching(doc: spacy.tokens.Doc, terms: list) -> tuple:
+def phrase_matching(doc: spacy.tokens.Doc, terms: list, attribute: str="LOWER") -> tuple:
     """Returns a tuple containing number of matches (int) and a Counter object representing the number of times each term appears in the given doc."""
-    matcher = spacy.matcher.PhraseMatcher(nlp.vocab, attr="LOWER")
+    matcher = spacy.matcher.PhraseMatcher(nlp.vocab, attr=attribute)  # attr="LEMMA" or "LOWER"
     # NOTE: make_doc is *only* a tokenizer, no processing like tagging, parsing, other labeling (like ner), etc. takes place.
-    patterns = [nlp.make_doc(term) for term in terms]  # OR: patterns = list(nlp.tokenizer.pipe(terms)) - is faster for more terms
+    if attribute != "LOWER":
+        patterns = [phrase_nlp(term) for term in terms]  # OR: patterns = list(nlp.tokenizer.pipe(terms)) - is faster for more terms
+    else:
+        patterns = [nlp(term) for term in terms]
     matcher.add("TerminologyList", None, *patterns)  # Instead of None, you can use an on_match callback. (eg: print("WE HAVE ATLEAST ONE MATCH WOOHOO"))
     matches = matcher(doc)
-    return len(matches), Counter(doc[start:end].text for _, start, end in matches)
+    return len(matches), Counter(preprocess_token(token) for _, start, end in matches for token in doc[start:end])
     

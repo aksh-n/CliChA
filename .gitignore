@@ -129,10 +129,13 @@ dmypy.json
 .pyre/
 .vscode/
 .idea/
+
+# Files used for testing purposes
 old_pycode.py
 log.txt
 climate_keywords/keywords_unedited_old2.txt
 climate_keywords/keywords_unedited_old.txt
+climate_data/test
 testscrapy/nasa_nosp.txt
 testscrapy/nasa_old.txt
 
