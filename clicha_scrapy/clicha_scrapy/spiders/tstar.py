@@ -28,7 +28,7 @@ class TStarSpider(SitemapSpider):
     NUM_CAP_PER_SITEMAP = 300
     
 
-    def closed(self: "TStarSpider", reason: str):
+    def closed(self: 'TStarSpider', reason: str):
         with open('tstar.txt', 'a', encoding='utf-8') as f:
             f.write('Articles crawled: ' + str(self.num_of_articles) + '\n')
 
