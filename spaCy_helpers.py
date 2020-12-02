@@ -148,5 +148,6 @@ def phrase_matching(doc: spacy.tokens.Doc, terms: list, attribute: str="LOWER") 
         patterns = [nlp(term) for term in terms]
     matcher.add("TerminologyList", None, *patterns)  # Instead of None, you can use an on_match callback. (eg: print("WE HAVE ATLEAST ONE MATCH WOOHOO"))
     matches = matcher(doc)
-    return len(matches), Counter(preprocess_token(token) for _, start, end in matches for token in doc[start:end])
+    counter_items = Counter(preprocess_token(token) for _, start, end in matches for token in doc[start:end]).most_common()
+    return len(matches), len(counter_items), counter_items
     
