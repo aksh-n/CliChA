@@ -9,3 +9,4 @@ To install all the required libraries, run the following commands:
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
+Then, locate the PeperScraper directory and run `setup.py install`.
