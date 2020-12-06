@@ -8,7 +8,8 @@ with open('climate_keywords/keywords.txt') as f:
 
 
 def nytimes_climate_test(year_start: int, year_end: int, attribute: str="LOWER") -> None:
-    """Extracts data for testing purposes.
+    """Processes nytimes articles and writes a cumulative report 
+    in climate_data/nytimes_processed_data for each year.
     """
     idf_dict = create_idf_dict()
     for year in range(year_start, year_end + 1):
@@ -26,7 +27,7 @@ def nytimes_climate_test(year_start: int, year_end: int, attribute: str="LOWER")
                     [i, distinct_matches, total_matches, article_cai, counter_items]
                 )
         articles_with_matches.sort(key=lambda x: x[1], reverse=True)
-        with open(f'climate_data/test/test_{year}.txt', 'w') as f:
+        with open(f'climate_data/nytimes_processsed_data/ny_{year}.txt', 'w') as f:
             writer = csv.writer(f)
             writer.writerows(articles_with_matches)
         # pprint(articles_with_matches)
