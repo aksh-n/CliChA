@@ -58,6 +58,7 @@ def final_keywords() -> None:
     with open("climate_keywords/possible_keywords.txt", "r") as f:
         reader = csv.reader(f)
         for row in reader:
+            print(row[0], row[0] in false_positives)
             if row[0] not in false_positives:
                 keywords.append(row[0])
             if len(keywords) == 100:

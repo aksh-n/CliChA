@@ -138,6 +138,8 @@ climate_keywords/keywords_unedited_old.txt
 climate_data/test
 testscrapy/nasa_nosp.txt
 testscrapy/nasa_old.txt
+requirements_old.txt
+test_plot.py
 
 # log files for nytimes scraper
 nytimeslog/

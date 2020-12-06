@@ -19,7 +19,7 @@ def nytimes_climate_test(year_start: int, year_end: int, attribute: str="LOWER")
         for i, doc in enumerate(docs):
             total_matches, distinct_matches, counter_items = sh.phrase_matching(doc, keywords)
             if distinct_matches > 0:
-                articles_with_matches.append([i, distinct_matches, total_matches, counter_items])
+                articles_with_matches.append([i, distinct_matches, total_matches, len(doc), counter_items])
         articles_with_matches.sort(key=lambda x: x[1], reverse=True)
         with open(f'climate_data/test/test_{year}.txt', 'w') as f:
             writer = csv.writer(f)
@@ -46,12 +46,14 @@ def nytimes_climate(year_start: int, year_end: int) -> None:
             count_climate_change = 0
             for row in data:
                 distinct_keywords, total_keywords = [int(ele) for ele in row.split(',', maxsplit=3)[1:3]]
-                if distinct_keywords >= 8:
+                if distinct_keywords >= 8 and total_keywords >= 15:
                     count_climate_change += 1
             climate_change_yearly.append([year, count_climate_change, 1500])
             writer.writerows(climate_change_yearly)
     
 
+def test_climate_aware(distinct_keywords: int, total_keywords: int, length_of_pub: int) -> bool:
+    return distinct_keywords >= 8 and total_keywords >= 15
 
 if __name__ == "__main__":
     # for y in range(1851, 2020):
