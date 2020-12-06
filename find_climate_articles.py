@@ -8,8 +8,8 @@ with open('climate_keywords/keywords.txt') as f:
 
 
 def nytimes_climate_test(year_start: int, year_end: int, attribute: str="LOWER") -> None:
-    """Processes nytimes articles and writes a cumulative report 
-    in climate_data/nytimes_processed_data for each year.
+    """Processes nytimes articles and writes a cumulative report in 
+    climate_data/nytimes_processed_data for each year.
     """
     idf_dict = create_idf_dict()
     for year in range(year_start, year_end + 1):
@@ -59,7 +59,7 @@ def nytimes_climate(year_start: int, year_end: int) -> None:
     with open('climate_data/climate_change_data.txt', 'w') as f:
         writer = csv.writer(f)
         for year in range(year_start, year_end + 1):
-            filename = f"climate_data/test/test_{year}.txt"
+            filename = f"climate_data/nytimes_processsed_data/ny_{year}.txt.txt"
             with open(filename, 'r') as f:
                 data = f.readlines()
             climate_change_yearly = []
