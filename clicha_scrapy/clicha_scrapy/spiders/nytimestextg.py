@@ -8,7 +8,9 @@ from scrapy.http import Response, TextResponse
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 
-from text_writer import append_article
+if __package__ == 'clicha_scrapy.spiders':
+    from clicha_scrapy.text_writer import append_article
+
 
 class NyTimesTextSpider(CrawlSpider):
     """A class used to clawl the NYTimes website for articles.
@@ -95,5 +97,8 @@ class NyTimesTextSpider(CrawlSpider):
         if self.num_counter[year] >= self.NUM_PER_YEAR and all({x >= self.NUM_PER_YEAR for x in self.num_counter.values()}):
             raise CloseSpider("Job finished")
 
-if __name__ == '__main__':
-    help(append_article)
+# if __name__ == '__main__':
+#     import sys
+#     sys.path.append('..')
+#     import text_writer
+#     help(append_article)

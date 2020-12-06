@@ -7,7 +7,8 @@ from scrapy.http import TextResponse
 from scrapy.utils.sitemap import Sitemap
 from scrapy.exceptions import CloseSpider
 
-from text_writer import append_article
+if __package__ == 'clicha_scrapy.spiders':
+    from clicha_scrapy.text_writer import append_article
 
 
 class TStarSpider(SitemapSpider):

@@ -2,7 +2,8 @@ import scrapy
 from scrapy.spiders import SitemapSpider
 from scrapy.http import TextResponse
 
-from text_writer import append_article
+if __package__ == 'clicha_scrapy.spiders':
+    from clicha_scrapy.text_writer import append_article
 
 
 class NASASpider(SitemapSpider):
