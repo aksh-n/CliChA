@@ -2,6 +2,8 @@ import scrapy
 from scrapy.spiders import SitemapSpider
 from scrapy.http import TextResponse
 
+from text_writer import append_article
+
 
 class NASASpider(SitemapSpider):
     """A class used to crawl the NASA climate change site for climate change related articles."""
@@ -28,8 +30,6 @@ class NASASpider(SitemapSpider):
 
         txt = str.join(' ', [s.strip() for s in txtlist])
 
-        with open('nasa.txt', 'a', encoding='utf-8') as f:
-            f.write(str(self.num_of_articles) + '-> ' + title + '\n' + txt)
-            f.write('\n--------\n')
+        append_article('nasa.txt', str(self.num_of_articles) + '-> ' + title + '\n' + txt)
         
         self.num_of_articles += 1
