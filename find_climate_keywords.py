@@ -5,7 +5,7 @@ from collections import Counter, defaultdict
 
 
 def find_idf_tstar() -> None:
-    """Writes in climate_keywords/tstar_idf.txt eahc term and the idf of the 
+    """Writes in climate_keywords/tstar_idf.txt each term and the idf of the 
     term found in clicha_scrapy/tstar.txt"""
     docs = sh.list_doc_from_text('clicha_scrapy/tstar.txt')
     tf_dicts = [sh.term_frequency_dict(doc) for doc in docs]
@@ -35,7 +35,7 @@ def find_possible_keywords() -> None:
             if val[1] > 50 and '@' not in term and "http" not in term:
                 processed_final_dict[term] = [val[0] / val[1], val[1]]
         items = sorted(processed_final_dict.items(), key=lambda x: (x[1][0], x[1][1]), reverse=True)
-        with open("climate_keywords/possible_keywords.txt", "w") as f:
+        with open("climate_keywords/nasa_keywords.txt", "w") as f:
             writer = csv.writer(f)
             for term, val in items:
                 writer.writerow([term, val])
@@ -67,6 +67,9 @@ def final_keywords() -> None:
         for keyword in keywords:
             f.write(keyword + "\n")
 
+
+def final_keywords_merger() -> None:
+    """Merges the final keywords."""
 
 # find_idf_tstar()
 # find_possible_keywords()
