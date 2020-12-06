@@ -7,6 +7,9 @@ from scrapy.http import TextResponse
 from scrapy.utils.sitemap import Sitemap
 from scrapy.exceptions import CloseSpider
 
+if __package__ == 'clicha_scrapy.spiders':
+    from clicha_scrapy.text_writer import append_article
+
 
 class TStarSpider(SitemapSpider):
     """A class used to crawl the Toronto Star site for articles.
@@ -28,7 +31,7 @@ class TStarSpider(SitemapSpider):
     NUM_CAP_PER_SITEMAP = 300
     
 
-    def closed(self: "TStarSpider", reason: str):
+    def closed(self: 'TStarSpider', reason: str):
         with open('tstar.txt', 'a', encoding='utf-8') as f:
             f.write('Articles crawled: ' + str(self.num_of_articles) + '\n')
 
@@ -42,9 +45,7 @@ class TStarSpider(SitemapSpider):
 
         txt = str.join(' ', [s.strip() for s in txtlist])
 
-        with open('tstar.txt', 'a', encoding='utf-8') as f:
-            f.write(str(self.num_of_articles) + '-> ' + title + '\n' + txt)
-            f.write('\n--------\n')
+        append_article('tstar.txt', str(self.num_of_articles) + '-> ' + title + '\n' + txt)
         
         self.num_of_articles += 1
         

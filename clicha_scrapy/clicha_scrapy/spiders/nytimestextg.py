@@ -4,10 +4,13 @@ from os import error
 import scrapy
 from random import randint
 from scrapy.exceptions import CloseSpider
-from clicha_scrapy.items import ArticleItem
 from scrapy.http import Response, TextResponse
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
+
+if __package__ == 'clicha_scrapy.spiders':
+    from clicha_scrapy.text_writer import append_article
+
 
 class NyTimesTextSpider(CrawlSpider):
     """A class used to clawl the NYTimes website for articles.
@@ -88,11 +91,14 @@ class NyTimesTextSpider(CrawlSpider):
         if not txt or txt.isspace():
             return
 
-        # have to manually set encoding to bypass windows locale
-        with open(f'./nytimestext/{year}.txt', 'a', encoding='utf-8', errors="ignore") as f:
-            f.write(str(self.num_counter[year]) + '-> ' + headline + '\n' + txt)
-            f.write('\n--------\n')
+        append_article(f'./nytimestext/{year}.txt', str(self.num_counter[year]) + '-> ' + headline + '\n' + txt)
 
         self.num_counter[year] += 1
         if self.num_counter[year] >= self.NUM_PER_YEAR and all({x >= self.NUM_PER_YEAR for x in self.num_counter.values()}):
             raise CloseSpider("Job finished")
+
+# if __name__ == '__main__':
+#     import sys
+#     sys.path.append('..')
+#     import text_writer
+#     help(append_article)
