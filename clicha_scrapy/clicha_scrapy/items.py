@@ -4,8 +4,3 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import scrapy
-
-
-class ArticleItem(scrapy.Item):
-    headline = scrapy.Field()
-    content = scrapy.Field()

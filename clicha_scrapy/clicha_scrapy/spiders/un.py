@@ -8,7 +8,7 @@ if __package__ == 'clicha_scrapy.spiders':
 
 
 class UNSpider(Spider):
-    """A class used to crawl the NASA climate change site for climate change related articles."""
+    """A class used to crawl the UN climate change site for climate change related articles."""
 
     name = 'UN'
     allowed_domains = ['news.un.org']
