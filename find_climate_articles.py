@@ -7,7 +7,7 @@ with open('climate_keywords/keywords.txt') as f:
     keywords = f.read().split('\n')
 
 
-def nytimes_climate_test(year_start: int, year_end: int, attribute: str="LOWER") -> None:
+def nytimes_climate_test(folder: str, year_start: int, year_end: int, attribute: str="LOWER") -> None:
     """Processes nytimes articles and writes a cumulative report in 
     climate_data/nytimes_processed_data for each year.
     """
