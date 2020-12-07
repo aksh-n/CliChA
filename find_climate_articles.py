@@ -27,7 +27,7 @@ def nytimes_climate_test(year_start: int, year_end: int, attribute: str="LOWER")
                     [i, distinct_matches, total_matches, article_cai, counter_items]
                 )
         articles_with_matches.sort(key=lambda x: x[1], reverse=True)
-        with open(f'climate_data/nytimes_processsed_data/ny_{year}.txt', 'w') as f:
+        with open(f'climate_data/nytimes_processed_data/ny_{year}.txt', 'w') as f:
             writer = csv.writer(f)
             writer.writerows(articles_with_matches)
         # pprint(articles_with_matches)
@@ -59,7 +59,7 @@ def nytimes_climate(year_start: int, year_end: int) -> None:
     with open('climate_data/climate_change_data.txt', 'w') as f:
         writer = csv.writer(f)
         for year in range(year_start, year_end + 1):
-            filename = f"climate_data/nytimes_processsed_data/ny_{year}.txt.txt"
+            filename = f"climate_data/nytimes_processed_data/ny_{year}.txt"
             with open(filename, 'r') as f:
                 data = f.readlines()
             climate_change_yearly = []

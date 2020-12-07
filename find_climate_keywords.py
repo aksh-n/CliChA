@@ -69,7 +69,7 @@ def final_keywords(filename: str) -> None:
         'caltech', 'vandenberg', 'orbiting', 'orbit', '358', 'pasadena', 'la',
         'irvine', 'spacecraft', 'icesat', 'landsat', 'spaceborne', 'mission',
         'niña', 'carbon', 'dioxide', 'sdgs', 'wmo', 'unep', 'katowice',
-        'taalas', 'fao', 'gueterres', 'un', 'antónio', 'ms.', 'covid-19'
+        'taalas', 'fao', 'guterres', 'un', 'antónio', 'ms.', 'covid-19'
     ]
     # Concatenated words into phrases because they (almost) always came together in climate-change data.
     keywords = ['el niño', 'la niña', 'carbon dioxide']  
