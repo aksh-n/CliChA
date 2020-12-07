@@ -1,3 +1,12 @@
+"""Climate Change Awareness (CliChA), Climate Change Processor
+
+This module contains the NASASpider, a Scrapy spider that crawls 'climate.nasa.gov' for
+climate change related articles.
+
+Copyright (c) 2020 Akshat Naik and Tony Hu.
+Licensed under the MIT License. See LICENSE in the project root for license information.
+"""
+
 import spaCy_helpers as sh
 from find_climate_keywords import create_idf_dict
 import csv
@@ -7,7 +16,7 @@ with open('climate_keywords/keywords.txt') as f:
     keywords = f.read().split('\n')
 
 
-def articles_climate_test(folder: str, year_start: int, year_end: int, attribute: str="LOWER") -> None:
+def articles_process_yearly(folder: str, year_start: int, year_end: int, attribute: str="LOWER") -> None:
     """Processes folder articles and writes a cumulative report in 
     climate_data/{folder}_processed_data for each year.
     """
@@ -27,7 +36,7 @@ def articles_climate_test(folder: str, year_start: int, year_end: int, attribute
                     [i, distinct_matches, total_matches, article_cai, counter_items]
                 )
         articles_with_matches.sort(key=lambda x: x[1], reverse=True)
-        with open(f'climate_data/{folder}_processed_data/ny_{year}.txt', 'w') as f:
+        with open(f'climate_data/{folder}_processed_data/{year}.txt', 'w') as f:
             writer = csv.writer(f)
             writer.writerows(articles_with_matches)
         # pprint(articles_with_matches)
@@ -46,7 +55,7 @@ def article_climate_awareness_index(matches: list, idf_dict: dict, length_of_doc
     return round(article_cai / length_of_doc, 5)
 
 
-def articles_climate(folder: str, year_start: int, year_end: int) -> None:
+def articles_process(folder: str, year_start: int, year_end: int) -> None:
     """Calculates and writes the number of articles that tested climate-change positive 
     from year_start to year_end (both inclusive) in a csv file.
     
@@ -56,7 +65,7 @@ def articles_climate(folder: str, year_start: int, year_end: int) -> None:
     row[2] is the Climate Awareness Index of that year 
     row[3] is the total number of articles processed for that year
     """
-    with open('climate_data/climate_change_data.txt', 'w') as f:
+    with open(f'climate_data/{folder}_climate_change_data.txt', 'w') as f:
         writer = csv.writer(f)
         for year in range(year_start, year_end + 1):
             filename = f"climate_data/{folder}_processed_data/{year}.txt"
@@ -81,4 +90,7 @@ def test_climate_aware(distinct_keywords: float, total_keywords: float, article_
 if __name__ == "__main__":
     # for y in range(1851, 2021):
     #     nytimes_climate_test(y, y)
-    nytimes_climate(1851, 2020)
+    # nytimes_climate(1851, 2020)
+    for y in range(1998, 2021):
+        articles_process_yearly("science_daily_small", y, y)
+    pass
