@@ -143,3 +143,4 @@ test_plot.py
 
 # log files for nytimes scraper
 nytimeslog/
+science_daily_text/
