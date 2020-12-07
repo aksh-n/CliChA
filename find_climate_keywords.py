@@ -38,10 +38,10 @@ def find_possible_keywords(files: list) -> None:
             final_dict[term] = [final_dict[term][0] + val, final_dict[term][1] + 1]
     processed_final_dict = {}
     for term, val in final_dict.items():
-        if val[1] > 30 and '@' not in term and "http" not in term:
+        if val[1] > 50 and '@' not in term and "http" not in term:
             processed_final_dict[term] = [val[0] / val[1], val[1]]
     items = sorted(processed_final_dict.items(), key=lambda x: (x[1][0], x[1][1]), reverse=True)
-    with open(f"climate_keywords/{combined_filename}_keywords.txt", "w") as f:
+    with open(f"climate_keywords/{combined_filename}keywords.txt", "w") as f:
         writer = csv.writer(f)
         for term, val in items:
             writer.writerow([term, val])
@@ -67,16 +67,15 @@ def final_keywords(filename: str) -> None:
         "buis", '0474', '°', 'modis', 'icebridge', 'icesat-2', 'sounder',
         'giss', 'noaa', 'jpl', 'nasa', 'goddard', 'el', 'niño', 'c', 'langley',
         'caltech', 'vandenberg', 'orbiting', 'orbit', '358', 'pasadena', 'la',
-        'irvine', 'spacecraft', 'icesat', 'landsat', 'spaceborne', 'mission,'
+        'irvine', 'spacecraft', 'icesat', 'landsat', 'spaceborne', 'mission',
         'niña', 'carbon', 'dioxide', 'sdgs', 'wmo', 'unep', 'katowice',
-        'taalas', 'fao', 
+        'taalas', 'fao', 'gueterres', 'un', 'antónio', 'ms.', 'covid-19'
     ]
     # Concatenated words into phrases because they (almost) always came together in climate-change data.
     keywords = ['el niño', 'la niña', 'carbon dioxide']  
-    with open("climate_keywords/possible_keywords.txt", "r") as f:
+    with open(f"climate_keywords/{filename}.txt", "r") as f:
         reader = csv.reader(f)
         for row in reader:
-            print(row[0], row[0] in false_positives)
             if row[0] not in false_positives:
                 keywords.append(row[0])
             if len(keywords) == 100:
@@ -92,7 +91,6 @@ def final_keywords_merger() -> None:
 
 if __name__ == "__main__":
     climate_files = ["un", "nasa"]
-    find_possible_keywords(climate_files)
+    # find_possible_keywords(climate_files)
     # find_idf_tstar()
-    # find_possible_keywords()
-    # final_keywords()
+    final_keywords("un_nasa_keywords")
