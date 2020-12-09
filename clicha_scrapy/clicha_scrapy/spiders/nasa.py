@@ -64,6 +64,9 @@ class NASASpider(SitemapSpider):
 
 
 if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
     import python_ta
     python_ta.check_all(config={
         'allowed-io': ['*'],
@@ -74,6 +77,7 @@ if __name__ == '__main__':
                           'clicha_scrapy.text_writer',
                           'os',
                           'sys',
+                          'doctest'
                           'python_ta.contracts'],
         'max-line-length': 100,
         'max-args': 6,
