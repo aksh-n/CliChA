@@ -77,7 +77,7 @@ if __name__ == '__main__':
                           'clicha_scrapy.text_writer',
                           'os',
                           'sys',
-                          'doctest'
+                          'doctest',
                           'python_ta.contracts'],
         'max-line-length': 100,
         'max-args': 6,
