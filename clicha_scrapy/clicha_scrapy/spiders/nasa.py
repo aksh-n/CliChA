@@ -23,7 +23,8 @@ else:
 class NASASpider(SitemapSpider):
     """A class that crawls the NASA climate change site for climate change related articles.
 
-    The scraped files are stored in 'nasa.txt'.
+    Keywords are extracted from these articles to then be used on other articles to calculate
+    the Climate Change Awareness Index. The scraped articles are stored in 'nasa.txt'.
 
     Instance Attributes:
         - (inherited) name: the name of the spider
