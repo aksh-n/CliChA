@@ -31,7 +31,7 @@ class NASASpider(SitemapSpider):
         - (inherited) allowed_domains: the domain on which the spider is allowed to crawl data
         - (inherited) sitemap_urls: the url(s) containing the initial sitemap, where links to
           articles are discovered
-        - writer: a TextWriter that handles text formatting and output to file.
+        - writer: a TextWriter that handles text formatting and output to file
     """
 
     name: str = 'NASA'
