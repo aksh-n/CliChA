@@ -1,12 +1,19 @@
+"""Climate Change Awareness (CliChA), Climate Change Keyword Finder
+
+This module finds keywords important to climate change by comparing general articles
+and climate change related articles in their vocabulary usage.
+
+Copyright (c) 2020 Akshat Naik and Tony Hu.
+Licensed under the MIT License. See LICENSE in the project root for license information.
+"""
+import csv
+from collections import defaultdict
 import spaCy_helpers as sh
-import spacy, csv
-from pprint import pprint
-from collections import Counter, defaultdict
 
 
 def find_idf_tstar() -> None:
-    """Writes in climate_keywords/tstar_idf.txt each term and the idf of the 
-    term found in clicha_scrapy/tstar.txt"""
+    """Writes in climate_keywords/tstar_idf.txt each term and the idf of the term found in
+    clicha_scrapy/tstar.txt"""
     docs = sh.list_doc_from_text('clicha_scrapy/tstar.txt')
     tf_dicts = [sh.term_frequency_dict(doc) for doc in docs]
     idf_dict = sh.inverse_document_frequency_dict(tf_dicts)
@@ -28,7 +35,7 @@ def create_idf_dict() -> dict:
 
 def find_possible_keywords(files: list) -> None:
     """Writes in climate_keywords/{filename}_keywords.txt rows of 3 comma-separated values.
-    Each row consists of term, average tf-idf of term, number of times it occured in each document."""
+    Each row consists of term, average tf-idf of term, number of times it occured in each doc."""
     idf_dict = create_idf_dict()
     combined_filename, docs = _docs_from_climate_files(files)
     tf_idf_dicts = [sh.tf_idf_dict(sh.term_frequency_dict(doc), idf_dict) for doc in docs]
@@ -48,8 +55,8 @@ def find_possible_keywords(files: list) -> None:
 
 
 def _docs_from_climate_files(files: list) -> tuple:
-    """Returns a tuple of combined_filename and docs created from the given list 
-    of filenames in climate_data."""
+    """Returns a tuple of combined_filename and docs created from the given list of filenames
+    in climate_data."""
     docs = []
     combined_filename = ""
     for filename in files:
@@ -61,7 +68,7 @@ def _docs_from_climate_files(files: list) -> tuple:
 def final_keywords(filename: str) -> None:
     """Writes the final keywords in climate_keywords/keywords.txt"""
     # False positives are proper nouns, acronyms, other words that aren't suitable keywords because
-    # their td-idf and number of occurences are much higher due to the choice of climate-change data 
+    # their td-idf and number of occurences are much higher due to the choice of climate-change data
     # (NASA and UN) and other words which are concatenated as phrases instead.
     false_positives = [
         "buis", '0474', '°', 'modis', 'icebridge', 'icesat-2', 'sounder',
@@ -71,8 +78,9 @@ def final_keywords(filename: str) -> None:
         'niña', 'carbon', 'dioxide', 'sdgs', 'wmo', 'unep', 'katowice',
         'taalas', 'fao', 'guterres', 'un', 'antónio', 'ms.', 'covid-19'
     ]
-    # Concatenated words into phrases because they (almost) always came together in climate-change data.
-    keywords = ['el niño', 'la niña', 'carbon dioxide']  
+    # Concatenated words into phrases because they (almost) always came together in
+    # climate-change data.
+    keywords = ['el niño', 'la niña', 'carbon dioxide']
     with open(f"climate_keywords/{filename}.txt", "r") as f:
         reader = csv.reader(f)
         for row in reader:
@@ -85,12 +93,20 @@ def final_keywords(filename: str) -> None:
             f.write(keyword + "\n")
 
 
-def final_keywords_merger() -> None:
-    """Merges the final keywords."""
-
-
 if __name__ == "__main__":
-    climate_files = ["un", "nasa"]
-    # find_possible_keywords(climate_files)
+    # Sample Usage:
     # find_idf_tstar()
-    final_keywords("un_nasa_keywords")
+    # climate_files = ["un", "nasa"]
+    # find_possible_keywords(climate_files)
+    # final_keywords("un_nasa_keywords")
+    import python_ta
+    python_ta.check_all(config={
+        'extra-imports': ['spaCy_helpers', 'collections', 'csv'],
+        'allowed-io': [
+            'find_idf_tstar', 'create_idf_dict', 'find_possible_keywords',
+            '_docs_from_climate_files', 'final_keywords'
+        ],
+        'max-line-length': 100,
+        'max-locals': 25,
+        'disable': ['R1705', 'C0200']
+    })

@@ -1,38 +1,53 @@
-import spacy
-from pprint import pprint
+"""Climate Change Awareness (CliChA), Helper spaCy functions
+
+This module provides spaCy helper functions, to be used for processing in other modules.
+
+Copyright (c) 2020 Akshat Naik and Tony Hu.
+Licensed under the MIT License. See LICENSE in the project root for license information.
+"""
 from collections import Counter
 from math import log
+import spacy
+
 
 stop_list = ["Mr.", "Ms.", "Mrs.", "say", "'s", "Dr."]
-nlp = spacy.load('en_core_web_sm', disable=["tagger","parser", "ner"])
+nlp = spacy.load('en_core_web_sm', disable=["tagger", "parser", "ner"])
 phrase_nlp = spacy.load('en_core_web_sm', disable=["ner"])
 nlp.Defaults.stop_words.update(stop_list)
 phrase_nlp.Defaults.stop_words.update(stop_list)
 
 
 def doc_from_text(filename: str) -> spacy.tokens.Doc:
-    """Returns a Doc object from the text in filename."""
+    """Returns a Doc object from the text in filename.
+
+    Instance Attributes:
+        - filename: the name of the file
+    """
     with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
-        # text = f.read().decode(encoding=encoding) - takes encoding as parameter
         text = f.read()
     doc = nlp(text)
     return doc
 
 
-def list_doc_from_text(filename: str, num: int=-1, tagging=False) -> spacy.tokens.Doc:
-    """Returns a list of first num Doc objects from the text in filename.
-    
-    If num is None, then all Doc objects from the text are returned.
+def list_doc_from_text(filename: str, num: int = -1, tagging: bool = False) -> spacy.tokens.Doc:
+    """Returns a list of the first num Doc objects from the text in filename.
+
+    Instance Attributes:
+        - filename: the name of the file
+        - num: the number of Doc objects to be returned.
+        if num  == -1, then all Doc objects from the text are returned
+        - tagging: bool indicating whether to tag and parse the text or not
     """
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf-8') as f:
         texts = f.read().split("--------")
     if num != -1:
         texts = texts[:num]
-    else: 
+    else:
         num = len(texts)
     if tagging:
         docs = []
-        for i in range((num // 100) + 1):  # to prevent excess memory consumption and termination of task.
+        # To prevent excess memory consumption and termination of task.
+        for i in range((num // 100) + 1):
             docs += list(phrase_nlp.pipe(texts[i * 100: (i + 1) * 100]))
     else:
         docs = list(nlp.pipe(texts))
@@ -42,7 +57,11 @@ def list_doc_from_text(filename: str, num: int=-1, tagging=False) -> spacy.token
 def term_frequency_dict(doc: spacy.tokens.Doc) -> dict:
     """Returns a dict of the term frequency of each term in the given doc.
 
-    Term Frequency(t) = number of times term t appears in a document / the total number of terms in the document"""
+    Instance Attributes:
+        - doc: an instance of a Doc class
+
+    Term Frequency(t) = number of times term t appears in a document / the total number of terms in the document
+    """
     words = [preprocess_token(token) for token in doc if is_token_allowed(token)]
     count = Counter(words)
     return {word: count[word] / len(words) for word in count}
@@ -50,9 +69,12 @@ def term_frequency_dict(doc: spacy.tokens.Doc) -> dict:
 
 def inverse_document_frequency_dict(tf_dicts: list) -> dict:
     """Returns a dict of inverse document frequency of each term.
-    tf_dicts is the list in which each element is a term_frequency_dict of a single doc.
 
-    Inverse Document Frequency(t) = log_e(Total number of documents/ Number of documents with term t in it)"""
+    Instance Attributes:
+        - tf_dicts: list of Term Frequency dicts, each corresponding to a single Doc.
+
+    Inverse Document Frequency(t) = log_e(Total number of documents/ Number of documents with term t in it)
+    """
     words = Counter()  # Dict of all the words occuring in at least one of the documents
     for tf_dict in tf_dicts:
         words = words + Counter(tf_dict.keys())
@@ -61,10 +83,13 @@ def inverse_document_frequency_dict(tf_dicts: list) -> dict:
 
 def tf_idf(term: str, tf_dict: dict, idf_dict: dict) -> float:
     """Returns the tf-idf (Term Frequency-Inverse Document Frequency) of a term in a document.
-    tf_dict is a term_frequency_dict of a single doc.
-    idf_dict is a inverse_document_frequency_dict.
 
-    tf-idf(t)  = Term Frequency(t) * Inverse Document Frequency(t)"""
+    Instance Attributes:
+        - tf_dict: A Term Frequency dict corresponding to a single doc.
+        - idf_dict: An Inverse Document Frequency dict.
+
+    tf-idf(t) = Term Frequency(t) * Inverse Document Frequency(t)
+    """
     if term not in idf_dict:
         return 1000
     return tf_dict[term] * idf_dict[term]
@@ -72,64 +97,23 @@ def tf_idf(term: str, tf_dict: dict, idf_dict: dict) -> float:
 
 def tf_idf_dict(tf_dict: dict, idf_dict: dict) -> dict:
     """Returns a dict in which each key is a term mapping to tf-idf(term).
-    tf_dict is a term_frequency_dict of a single doc.
-    idf_dict is a inverse_document_frequency_dict."""
-    tf_idf_dict = {}
+
+    Instance Attributes:
+        - tf_dict: A Term Frequency dict corresponding to a single doc.
+        - idf_dict: An Inverse Document Frequency dict.
+
+    tf_idf_dict[t] = tf-idf(t)
+    """
+    tfidf_dict = {}
     for term in tf_dict.keys():
-        tf_idf_dict[term] = tf_idf(term, tf_dict, idf_dict)
-    return tf_idf_dict
-
-
-def highest_tf_idf(tf_dict: dict, idf_dict: dict) -> list:
-    """Returns a list in which each element is a tuple of term and tf-idf(term).
-    tf_dict is a term_frequency_dict of a single doc.
-    idf_dict is a inverse_document_frequency_dict."""
-    tf_idf_list = []
-    for term in tf_dict.keys():
-        tf_idf_list.append((term, tf_idf(term, tf_dict, idf_dict)))
-    tf_idf_list.sort(key=lambda x: x[1], reverse=True)
-    return tf_idf_list
-
-
-def set_custom_boundaries(doc: spacy.tokens.Doc) -> None:
-    """Sets is_sent_start of each token after ellipses to True in doc."""
-    for token in doc[:-1]:
-        if token.text == '...':
-            doc[token.i + 1].is_sent_start = True
-    return doc
-
-
-def sentence_detect(doc: spacy.tokens.Doc) -> list:
-    """Returns a list of sentences in the given file."""
-    return list(doc.sents)
-
-
-def lemmatization(doc: spacy.tokens.Doc) -> list:
-    """Returns a list of tuples having a (non-stop) word and lemmatized version of it, present in the given file."""
-    return [(token, token.lemma_) for token in doc if not token.is_stop and not token.is_punct]
-
-
-def frequency_words(doc: spacy.tokens.Doc, n: int = None) -> Counter:
-    """Returns a list of n (non-stop) words that are the most common in the given file."""
-    words = [preprocess_token(token) for token in doc if is_token_allowed(token)]
-    if n is None:
-        return Counter(words)
-    return Counter(words).most_common(n)
-
-
-def all_pos_explained(doc: spacy.tokens.Doc) -> list:
-    "Returns a list of each token in the given file along with its pos, pos_ attributes explained."
-    words_explained = [(token, token.pos, token.pos_, spacy.explain(token.pos_)) for token in doc]
-    return words_explained
-
-
-def pos_words(doc: spacy.tokens.Doc, pos: str) -> set:
-    """Returns a set of the given pos (Part-of-Speech) words"""
-    return {token for token in doc if token.pos_ == pos}
+        tfidf_dict[term] = tf_idf(term, tf_dict, idf_dict)
+    return tfidf_dict
 
 
 def is_token_allowed(token: spacy.tokens.Token) -> bool:
-    """Returns whether token is allowed or not. Allowed tokens are all tokens except stop words, punctuations and whitespace(s)."""
+    """Returns whether token is allowed or not.
+    Allowed tokens are all tokens except stop words, punctuations and whitespace(s).
+    """
     return not (not token.text.strip() or token.is_stop or token.is_punct)
 
 
@@ -138,16 +122,51 @@ def preprocess_token(token: spacy.tokens.Token) -> str:
     return token.lemma_.strip().lower()
 
 
-def phrase_matching(doc: spacy.tokens.Doc, terms: list, attribute: str="LOWER") -> tuple:
-    """Returns a tuple containing number of matches (int) and a Counter object representing the number of times each term appears in the given doc."""
+def phrase_matching(doc: spacy.tokens.Doc, matcher: spacy.matcher.PhraseMatcher) -> tuple:
+    """Returns a tuple containing number of matches (int) and a Counter object representing
+    the number of times each term appears in the given doc.
+
+    Instance Attributes:
+        - doc: an instance of a Doc class
+        - matcher: a PhraseMatcher object to be used for matching
+    """
+    matches = matcher(doc)
+    counter = Counter(preprocess_token(token) for _, start, end in matches for token in doc[start:end])
+    counter_items = counter.most_common()
+    return len(matches), len(counter_items), counter_items
+
+
+def phrase_matcher(terms: list, attribute: str = "LOWER") -> spacy.matcher.PhraseMatcher:
+    """Returns a PhraseMatcher object to be used for matching in phrase_matching.
+
+    Instance Attributes:
+        - terms: a list of terms to match with
+        - attribute: the Token attribute to match on
+        Useful options for attribute are 'LOWER' and 'LEMMA'
+
+    CAUTION: Passing 'LEMMA' as the attribute will cause the function runtime to increase more
+    than an order of magnitude when compared to passing 'LOWER'.
+    """
     matcher = spacy.matcher.PhraseMatcher(nlp.vocab, attr=attribute)  # attr="LEMMA" or "LOWER"
-    # NOTE: make_doc is *only* a tokenizer, no processing like tagging, parsing, other labeling (like ner), etc. takes place.
     if attribute != "LOWER":
-        patterns = [phrase_nlp(term) for term in terms]  # OR: patterns = list(nlp.tokenizer.pipe(terms)) - is faster for more terms
+        patterns = [phrase_nlp(term) for term in terms]
+        # OR: patterns = list(nlp.tokenizer.pipe(terms)) - is faster for more terms
     else:
         patterns = [nlp(term) for term in terms]
-    matcher.add("TerminologyList", None, *patterns)  # Instead of None, you can use an on_match callback. (eg: print("WE HAVE ATLEAST ONE MATCH WOOHOO"))
-    matches = matcher(doc)
-    counter_items = Counter(preprocess_token(token) for _, start, end in matches for token in doc[start:end]).most_common()
-    return len(matches), len(counter_items), counter_items
-    
+    matcher.add("TerminologyList", None, *patterns)
+    # Instead of None, you can use an on_match callback. (eg: print("WE HAVE ATLEAST ONE MATCH WOOHOO"))
+    return matcher
+
+
+if __name__ == "__main__":
+    import python_ta
+    python_ta.check_all(config={
+        'extra-imports': ['spacy', 'collections', 'math'],
+        'allowed-io': ['doc_from_text', 'list_doc_from_text'],
+        'max-line-length': 120,  # writing formulae in two lines looks ugly
+        'max-locals': 25,
+        # C0103: The library spaCy is stylized with the 'C' being capitalized
+        # E9997: nlp, phrase_nlp, stop_words, etc. are lowercase by convention according
+        # to the spacy documentation.
+        'disable': ['R1705', 'C0200', 'C0103', 'E9997']
+    })

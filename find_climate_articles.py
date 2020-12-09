@@ -15,34 +15,55 @@ with open('climate_keywords/keywords.txt') as h:
     KEYWORDS = h.read().split('\n')
 
 
-def articles_process_yearly(folder: str, year_start: int, year_end: int,
+def articles_process_yearly(dataset_name: str, year_start: int, year_end: int,
                             attribute: str = "LOWER") -> None:
-    """Processes folder articles and writes a cumulative report in
-    climate_data/{folder}_processed_data for each year.
+    """Processes dataset_name articles and writes a report for each year separately from year_start
+    to year_end (both inclusive) in climate_data/{dataset_name}_processed_data.
+
+    Instance Attributes:
+        - dataset_name: the name of the dataset (for ex: 'nytimes', 'science_daily_small')
+        - year_start: the year to start processing from
+        - year_end: the year to end processing on
+        - attribute: the attribute to be passed to the function phrase_matcher
+        Useful options for attribute are 'LOWER' and 'LEMMA'
+
+    CAUTION: Passing 'LEMMA' as the attribute on the entirety of one of the datasets will cause the
+    function to process for many hours (perhaps a day), and may even terminate in case RAM is
+    overloaded and/or has limited capacity.
+    In comparison, passing 'LOWER' as the attribute on the entirety of one of the datasets will
+    cause the function to complete within an hour or two.
     """
     idf_dict = create_idf_dict()
+    matcher = sh.phrase_matcher(KEYWORDS, attribute)
     for year in range(year_start, year_end + 1):
-        filename = f"clicha_scrapy/{folder}/{year}.txt"
+        filename = f"clicha_scrapy/{dataset_name}/{year}.txt"
         if attribute != "LOWER":
             docs = sh.list_doc_from_text(filename, tagging=True)
         else:
             docs = sh.list_doc_from_text(filename)
         articles_with_matches = []
         for i, doc in enumerate(docs):
-            total_matches, distinct_matches, counter_items = sh.phrase_matching(doc, KEYWORDS)
+            total_matches, distinct_matches, counter_items = sh.phrase_matching(doc, matcher)
             article_cai = article_climate_awareness_index(counter_items, idf_dict, len(doc))
             if distinct_matches > 0:
                 articles_with_matches.append(
                     [i, distinct_matches, total_matches, article_cai, counter_items]
                 )
         articles_with_matches.sort(key=lambda x: x[1], reverse=True)
-        with open(f'climate_data/{folder}_processed_data/{year}.txt', 'w') as f:
+        with open(f'climate_data/{dataset_name}_processed_data/{year}.txt', 'w') as f:
             writer = csv.writer(f)
             writer.writerows(articles_with_matches)
 
 
 def article_climate_awareness_index(matches: list, idf_dict: dict, length_of_doc: int) -> float:
-    """Returns a numeric estimate of how climate aware an article is."""
+    """Returns a numeric estimate of how climate aware a Doc is.
+    A Doc (a sequence of Tokens) is a class in spaCy.
+
+    Instance Attributes:
+        - matches: a list of tuples consisting of a word and the number of times it occurred
+        - idf_dict: an idf (Inverse Document Frequency) dict
+        - length_of_doc: the length of the given Doc (an article can be a Doc)
+    """
     article_cai = 0
     for word, count in matches:
         if word in idf_dict:
@@ -54,9 +75,14 @@ def article_climate_awareness_index(matches: list, idf_dict: dict, length_of_doc
     return round(article_cai / length_of_doc, 5)
 
 
-def articles_process(folder: str, year_start: int, year_end: int) -> None:
-    """Calculates and writes the number of articles that tested climate-change positive
-    from year_start to year_end (both inclusive) in a csv file.
+def articles_process(dataset_name: str, year_start: int, year_end: int) -> None:
+    """Prepares a cumulative report about climate_change for all the years from year_start
+    to year_end (both inclusive) on a given dataset, in a csv file.
+
+    Instance Attributes:
+        - dataset_name: the name of the dataset (for ex: 'nytimes', 'science_daily_small')
+        - year_start: the year to start processing from
+        - year_end: the year to end processing on
 
     For each row in the csv file,
     row[0] is the year
@@ -64,10 +90,10 @@ def articles_process(folder: str, year_start: int, year_end: int) -> None:
     row[2] is the Climate Awareness Index of that year
     row[3] is the total number of articles processed for that year
     """
-    with open(f'climate_data/{folder}_climate_change_data.txt', 'w') as f:
+    with open(f'climate_data/{dataset_name}_climate_change_data.txt', 'w') as f:
         writer = csv.writer(f)
         for year in range(year_start, year_end + 1):
-            filename = f"climate_data/{folder}_processed_data/{year}.txt"
+            filename = f"climate_data/{dataset_name}_processed_data/{year}.txt"
             with open(filename, 'r') as f:
                 data = f.readlines()
             climate_change_yearly = []
@@ -101,5 +127,6 @@ if __name__ == "__main__":
         'allowed-io': ['articles_process_yearly', 'articles_process', 'test_climate_aware'],
         'max-line-length': 100,
         'max-locals': 25,
+        # E9997: The h when using 'with open(...) as h' is a lowercase letter by convention.
         'disable': ['R1705', 'C0200', 'E9997']
     })
