@@ -1,0 +1,5 @@
+Some general comments:
+Due to the way python does imports, the following code:
+    if __package__ == 'clicha_scrapy.spiders':
+        from clicha_scrapy.text_writer import append_articl
+has to be added to prevent errors when running the files as top-level scripts.
