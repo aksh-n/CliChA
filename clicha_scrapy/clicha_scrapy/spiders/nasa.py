@@ -11,12 +11,14 @@ from scrapy.spiders import SitemapSpider
 from scrapy.http import TextResponse
 
 if __package__ == 'clicha_scrapy.spiders':
+    # if called from Scrapy command line
     from clicha_scrapy.text_writer import TextWriter
 else:
     # import from parent directory
     import os
     import sys
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    import inspect
+    sys.path.append(os.path.dirname(os.path.dirname(inspect.getfile(inspect.currentframe()))))
     from text_writer import TextWriter
 
 
@@ -29,7 +31,7 @@ class NASASpider(SitemapSpider):
     Instance Attributes:
         - (inherited) name: the name of the spider
         - (inherited) allowed_domains: the domain on which the spider is allowed to crawl data
-        - (inherited) sitemap_urls: the url(s) containing the initial sitemap, where links to
+        - (inherited) sitemap_urls: the url(s) containing the initial sitemap(s), where links to
           articles are discovered
         - writer: a TextWriter that handles text formatting and output to file
     """
@@ -37,7 +39,7 @@ class NASASpider(SitemapSpider):
     name: str = 'NASA'
     allowed_domains: List[str] = ['climate.nasa.gov']
     sitemap_urls: List[str] = ['https://climate.nasa.gov/sitemaps/news_items_sitemap.xml']
-    writer: TextWriter = TextWriter('nasa.txt')
+    writer: TextWriter
 
     def closed(self, reason: str) -> None:
         """Close the writer when the spider closes.
@@ -77,6 +79,7 @@ if __name__ == '__main__':
                           'clicha_scrapy.text_writer',
                           'os',
                           'sys',
+                          'inspect',
                           'doctest',
                           'python_ta.contracts'],
         'max-line-length': 100,

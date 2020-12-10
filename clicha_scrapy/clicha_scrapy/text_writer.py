@@ -6,20 +6,26 @@ This module is NOT a direct part of scrapy.
 import logging
 import sys
 from io import FileIO
+from typing import TextIO
 
 
 class TextWriter:
     # count the number of articles 
     counter: int
-    _file: FileIO
+    _path: str
+    _file: TextIO
 
     def __init__(self, file_path: str) -> None:
         # overwrite the file instead of appending to it
         # encoding has to be manually set to bypass Windows locale settings
         self.counter = 0
-        self._file = open(file_path, 'w', encoding='utf-8', errors='ignore')
+        self._path = file_path
     
     def append_article(self, body: str) -> None:
+        # don't open file until first use
+        if not hasattr(self, '_file'):
+            self._file = open(self._path, 'a', encoding='utf-8', errors='ignore')
+
         try:
             self._file.write(str(self.counter) + '-> ' + body)
             self._file.write('\n--------\n')
@@ -34,6 +40,7 @@ class TextWriter:
         self._file.close()
 
     def __del__(self):
+        print('called')
         if not self._file.closed:
             self._file.close()
 

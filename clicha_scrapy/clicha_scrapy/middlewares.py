@@ -10,9 +10,6 @@ from itemadapter import is_item, ItemAdapter
 from scrapy.exceptions import IgnoreRequest
 from scrapy.http import Request
 
-from clicha_scrapy.spiders.nytimestextg import NyTimesTextSpider
-
-
 class ClichaScrapySpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
@@ -82,9 +79,6 @@ class ClichaScrapyDownloaderMiddleware:
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
-
-        if 'year' in request.meta and spider.num_counter[request.meta['year']] >= spider.NUM_PER_YEAR:
-            raise IgnoreRequest()
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.

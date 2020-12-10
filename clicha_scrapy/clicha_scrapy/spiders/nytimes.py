@@ -6,7 +6,7 @@ This module contains the NyTimesTextSpider, a Scrapy spider that crawls
 Copyright (c) 2020 Akshat Naik and Tony Hu.
 Licensed under the MIT License. See LICENSE in the project root for license information.
 """
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Dict, Iterator, List, Optional
 from random import randint
 from scrapy.exceptions import CloseSpider
 from scrapy.http import TextResponse, Request
@@ -18,7 +18,8 @@ else:
     # import from parent directory
     import os
     import sys
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    import inspect
+    sys.path.append(os.path.dirname(os.path.dirname(inspect.getfile(inspect.currentframe()))))
     from text_writer import TextWriter
 
 
@@ -31,8 +32,6 @@ class NyTimesTextSpider(CrawlSpider):
     Instance Attributes:
         - (inherited) name: the name of the spider
         - (inherited) allowed_domains: the domain on which the spider is allowed to crawl data
-        - (inherited) custom_settings: settings that are overridden; in this case, an extra
-          middleware is added to speed up data extraction; see middlewares.py for details
         - base_url: the base url of NYTimes sitemaps
         - writers: a Dict of TextWriters that handle text formatting and output to file, each
           responsible for one year of data
@@ -41,14 +40,14 @@ class NyTimesTextSpider(CrawlSpider):
 
     name: str = 'nytimestext'
     allowed_domains: List[str] = ['spiderbites.nytimes.com', 'www.nytimes.com']
-    custom_settings: Dict[str, Any] = {
-        'DOWNLOADER_MIDDLEWARES': {
-            'clicha_scrapy.middlewares.ClichaScrapyDownloaderMiddleware': 000
-        }
-    }
+    # custom_settings: Dict[str, Any] = {
+    #     'DOWNLOADER_MIDDLEWARES': {
+    #         'clicha_scrapy.middlewares.ClichaScrapyDownloaderMiddleware': 000
+    #     }
+    # }
     base_url: str = 'https://spiderbites.nytimes.com'
     writers: Dict[int, TextWriter] = {}
-    NUM_PER_YEAR: int = 1500
+    num_per_year: int = 1500
 
     def closed(self, reason: str) -> None:
         """Close the writer when the spider closes.
@@ -63,6 +62,10 @@ class NyTimesTextSpider(CrawlSpider):
 
         This function is called automatically by Scrapy when scraping starts.
         """
+        demo = getattr(self, 'demo', False)
+        if demo:
+            self.num_per_year = 100
+
         # the start end end years can be configured from the command line
         start_year = int(getattr(self, 'start'))
         end_year = int(getattr(self, 'end'))
@@ -73,7 +76,7 @@ class NyTimesTextSpider(CrawlSpider):
 
     def parse(self, response: TextResponse, year: int) -> Iterator[Request]:
         """Parse the responses as requested by start_requests to extract sub-level links."""
-        if year in self.writers and self.writers[year].counter >= self.NUM_PER_YEAR:
+        if year in self.writers and self.writers[year].counter >= self.num_per_year:
             return
 
         # set priority to 10 to always process these first
@@ -87,29 +90,26 @@ class NyTimesTextSpider(CrawlSpider):
 
     def parse_sub(self, response: TextResponse, year: int) -> Iterator[Request]:
         """Parse the responses as requested by parse to extract article links."""
-        if year in self.writers and self.writers[year].counter >= self.NUM_PER_YEAR:
-            return
 
         for each in response.xpath('//ul[@id="headlines"]/li/a'):
-            # the meta component is used by the middleware te decide
-            # whether or not to drop the request based on articles already processed
+            if year in self.writers and self.writers[year].counter >= self.num_per_year:
+                continue
             yield response.follow(
                 each,
                 callback=self.parse_article,
                 priority=randint(0, 9),
-                meta={'year': year},
                 cb_kwargs={'year': year}
             )
 
     def parse_article(
-            self: "NyTimesTextSpider",
+            self,
             response: TextResponse, year: int
     ) -> Optional[Iterator[Request]]:
         """Parse each article to extract its content."""
-        if year in self.writers and self.writers[year].counter >= self.NUM_PER_YEAR:
+        if year in self.writers and self.writers[year].counter >= self.num_per_year:
             return
 
-        headline = response.xpath('//h1[@itemprop="headline"]/text()').get()
+        headline = response.xpath('//h1[@*="headline"]/text()').get()
         # exclude CN nytimes pages
         if headline is None:
             return
@@ -122,12 +122,15 @@ class NyTimesTextSpider(CrawlSpider):
             return
 
         if year not in self.writers:
-            self.writers[year] = TextWriter(f'./nytimes/{year}.txt')
+            if getattr(self, 'demo', False):
+                self.writers[year] = TextWriter('demo_nytimes.txt')
+            else:
+                self.writers[year] = TextWriter(f'./nytimes/{year}.txt')
         self.writers[year].append_article(headline + '\n' + txt)
 
         # early exit if there are enough articles already
-        if self.writers[year].counter >= self.NUM_PER_YEAR\
-            and all(writer.counter >= self.NUM_PER_YEAR
+        if self.writers[year].counter >= self.num_per_year\
+            and all(writer.counter >= self.num_per_year
                     for writer in self.writers.values()):
             raise CloseSpider("Job finished")
 
@@ -146,6 +149,7 @@ if __name__ == '__main__':
                           'typing',
                           'os',
                           'sys',
+                          'inspect',
                           'python_ta.contracts'],
         'max-line-length': 100,
         'max-args': 6,
