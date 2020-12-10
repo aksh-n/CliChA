@@ -40,8 +40,7 @@ class TextWriter:
         self._file.close()
 
     def __del__(self):
-        print('called')
-        if not self._file.closed:
+        if hasattr(self, '_file') and not self._file.closed:
             self._file.close()
 
 
