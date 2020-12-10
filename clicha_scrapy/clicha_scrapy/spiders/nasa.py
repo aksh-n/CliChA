@@ -1,4 +1,4 @@
-"""Climate Change Awareness, NASA Scraper
+"""Climate Change Awareness (ChiChA), NASA Scraper
 
 This module contains the NASASpider, a Scrapy spider that crawls 'climate.nasa.gov' for
 climate change related articles.

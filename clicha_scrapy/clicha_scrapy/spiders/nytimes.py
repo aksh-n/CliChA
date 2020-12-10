@@ -1,4 +1,4 @@
-"""Climate Change Awareness, NYTimes Scraper
+"""Climate Change Awareness (CliChA), NYTimes Scraper
 
 This module contains the NyTimesTextSpider, a Scrapy spider that crawls
 'nytimes.com' for articles.
