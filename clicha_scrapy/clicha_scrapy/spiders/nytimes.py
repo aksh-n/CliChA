@@ -1,4 +1,4 @@
-"""Climate Change Awareness, NYTimes Scraper
+"""Climate Change Awareness (CliChA), NYTimes Scraper
 
 This module contains the NyTimesTextSpider, a Scrapy spider that crawls
 'nytimes.com' for articles.
@@ -35,7 +35,7 @@ class NyTimesTextSpider(CrawlSpider):
         - base_url: the base url of NYTimes sitemaps
         - writers: a Dict of TextWriters that handle text formatting and output to file, each
           responsible for one year of data
-        - NUM_PER_YEAR: the maximum number of articles to scrapy for each year
+        - num_per_year: the maximum number of articles to scrapy for each year
     """
 
     name: str = 'nytimestext'
@@ -136,6 +136,9 @@ class NyTimesTextSpider(CrawlSpider):
 
 
 if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
     import python_ta
     python_ta.check_all(config={
         'allowed-io': ['*'],

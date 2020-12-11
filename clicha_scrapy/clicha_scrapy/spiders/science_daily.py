@@ -1,4 +1,4 @@
-"""Climate Change Awareness, Science Daily Scraper
+"""Climate Change Awareness (CliChA), Science Daily Scraper
 
 This module contains the ScienceDailySpider, a Scrapy spider that crawls
 'sciencedaily.com' for articles.
@@ -72,6 +72,9 @@ class ScienceDailySpider(SitemapSpider):
 
 
 if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
     import python_ta
     python_ta.check_all(config={
         'allowed-io': ['*'],

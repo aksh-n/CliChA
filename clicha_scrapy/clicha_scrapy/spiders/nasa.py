@@ -1,4 +1,4 @@
-"""Climate Change Awareness, NASA Scraper
+"""Climate Change Awareness (ChiChA), NASA Scraper
 
 This module contains the NASASpider, a Scrapy spider that crawls 'climate.nasa.gov' for
 climate change related articles.
@@ -39,7 +39,7 @@ class NASASpider(SitemapSpider):
     name: str = 'NASA'
     allowed_domains: List[str] = ['climate.nasa.gov']
     sitemap_urls: List[str] = ['https://climate.nasa.gov/sitemaps/news_items_sitemap.xml']
-    writer: TextWriter
+    writer: TextWriter = TextWriter('nasa.txt')
 
     def closed(self, reason: str) -> None:
         """Close the writer when the spider closes.
