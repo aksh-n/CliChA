@@ -122,6 +122,7 @@ def test_climate_aware(distinct_keywords: float, total_keywords: float, article_
 
 
 if __name__ == "__main__":
+    articles_process_yearly('science_daily_small', 1998, 2020, 'LEMMA')
     # Sample Usage (for nytimes):
     # articles_process_yearly("nytimes", 1851, 2020)
     # articles_process("nytimes", 1851, 2020)
@@ -131,12 +132,12 @@ if __name__ == "__main__":
     # Hence, the processesing has already been done in advance (with the LEMMA attribute).
     # Running the above code will overwrite the previous data processing done by LEMMA attribute which
     # is slightly more accurate (but much more time consuming) than the default LOWER attribute.
-    import python_ta
-    python_ta.check_all(config={
-        'extra-imports': ['spaCy_helpers', 'find_climate_keywords', 'csv'],
-        'allowed-io': ['articles_process_yearly', 'articles_process', 'test_climate_aware'],
-        'max-line-length': 100,
-        'max-locals': 25,
-        # E9997: The h when using 'with open(...) as h' is a lowercase letter by convention.
-        'disable': ['R1705', 'C0200', 'E9997']
-    })
+    # import python_ta
+    # python_ta.check_all(config={
+    #     'extra-imports': ['spaCy_helpers', 'find_climate_keywords', 'csv'],
+    #     'allowed-io': ['articles_process_yearly', 'articles_process', 'test_climate_aware'],
+    #     'max-line-length': 100,
+    #     'max-locals': 25,
+    #     # E9997: The h when using 'with open(...) as h' is a lowercase letter by convention.
+    #     'disable': ['R1705', 'C0200', 'E9997']
+    # })

@@ -7,6 +7,7 @@ Licensed under the MIT License. See LICENSE in the project root for license info
 """
 from collections import Counter
 from math import log
+from os import error
 import spacy
 
 
@@ -38,7 +39,7 @@ def list_doc_from_text(filename: str, num: int = -1, tagging: bool = False) -> s
         if num  == -1, then all Doc objects from the text are returned
         - tagging: bool indicating whether to tag and parse the text or not
     """
-    with open(filename, 'r', encoding='utf-8') as f:
+    with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
         texts = f.read().split("--------")
     if num != -1:
         texts = texts[:num]

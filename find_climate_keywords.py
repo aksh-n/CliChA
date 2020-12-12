@@ -25,7 +25,7 @@ def find_idf_tstar() -> None:
 
 def create_idf_dict() -> dict:
     """Returns the idf_dict from tstar_idf.txt"""
-    with open("climate_keywords/tstar_idf.txt", "r") as f:
+    with open("climate_keywords/tstar_idf.txt", "r", encoding='utf-8', errors='ignore') as f:
         reader = csv.reader(f)
         idf_dict = {}
         for term, idf in reader:
