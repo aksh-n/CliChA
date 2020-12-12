@@ -27,6 +27,12 @@ def articles_process_yearly(dataset_name: str, year_start: int, year_end: int,
         - attribute: the attribute to be passed to the function phrase_matcher
         Useful options for attribute are 'LOWER' and 'LEMMA'
 
+    For each row in {year}.txt in climate_data/{dataset_name}_processed_data,
+    row[0] is the index of the article
+    row[1] is the number of distinct keywords matched in that article
+    row[2] is the total number of keywords matched in that article
+    row[3] is a list of (keyword, number of times keyword occurred) pairs of that article 
+
     CAUTION: Passing 'LEMMA' as the attribute on the entirety of one of the datasets will cause the
     function to process for many hours (perhaps a day), and may even terminate in case RAM is
     overloaded and/or has limited capacity.
@@ -118,9 +124,13 @@ def test_climate_aware(distinct_keywords: float, total_keywords: float, article_
 if __name__ == "__main__":
     # Sample Usage (for nytimes):
     # articles_process_yearly("nytimes", 1851, 2020)
-    # articles_process("nytimes", 1998, 2020)
-    # WARNING: The above code may take more than hour to process.
-    # Hence, the processesing has already been done in advance.
+    # articles_process("nytimes", 1851, 2020)
+    #
+    # WARNING: The above code may take more than hour to process and with the LEMMA attribute,
+    # it may take an entire day. 
+    # Hence, the processesing has already been done in advance (with the LEMMA attribute).
+    # Running the above code will overwrite the previous data processing done by LEMMA attribute which
+    # is slightly more accurate (but much more time consuming) than the default LOWER attribute.
     import python_ta
     python_ta.check_all(config={
         'extra-imports': ['spaCy_helpers', 'find_climate_keywords', 'csv'],

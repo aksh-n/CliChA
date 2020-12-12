@@ -75,7 +75,7 @@ def final_keywords(filename: str) -> None:
         'giss', 'noaa', 'jpl', 'nasa', 'goddard', 'el', 'niño', 'c', 'langley',
         'caltech', 'vandenberg', 'orbiting', 'orbit', '358', 'pasadena', 'la',
         'irvine', 'spacecraft', 'icesat', 'landsat', 'spaceborne', 'mission',
-        'niña', 'carbon', 'dioxide', 'sdgs', 'wmo', 'unep', 'katowice',
+        'niña', 'carbon', 'dioxide', 'sdgs', 'wmo', 'unep', 'katowice', 'grace'
         'taalas', 'fao', 'guterres', 'un', 'antónio', 'ms.', 'covid-19'
     ]
     # Concatenated words into phrases because they (almost) always came together in

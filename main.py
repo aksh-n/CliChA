@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import tkinter as tk
-from climate_graphs import show_line_graph
+from climate_graphs import show_line_graph, show_bar_graph
 
 # Importing matplotlib and required classes and functions to integrate graphs into tkinter GUI.
 import matplotlib
@@ -9,15 +9,15 @@ from matplotlib.backend_bases import key_press_handler
 matplotlib.use("TkAgg")
 
 
-WIDTH = 800
+WIDTH = 1250
 HEIGHT= 800
 HEIGHT_WIDGET = 30
 MENU = [ 
-    "1. miniature scraping and processing + show graph",
-    "2. nytimes: number of articles and CAI",
-    "3. science daily: number of articles and CAI",
-    "4. comparison of nytimes and science daily 1998-2020",
-    "5. co2 graph"
+    '1. miniature scraping and processing + show graph',
+    '2. A "Climate Awareness Index (CAI) vs Years" line graph for New York Times and Science Daily',
+    '3. A "Number of Climate Aware Articles vs Years" line graph for New York Times and Science Daily',
+    '4. A Comparison of Nytimes and Science Daily 1998-2020',
+    '5. co2 graph'
 ]
 
 def create_app():
@@ -52,7 +52,7 @@ class Application(tk.Frame):
 
     def create_widgets(self):
         self.create_menu_and_buttons()
-        self.Frame2 = tk.Frame(self.master, bg = "pink")
+        self.Frame2 = tk.Frame(self.master, bg = "pink1")
         self.Frame2.place(
             x = 0, y = HEIGHT_WIDGET * (len(MENU) + 1),
             height = HEIGHT - HEIGHT_WIDGET * (len(MENU) + 1), width = WIDTH
@@ -72,7 +72,7 @@ class Application(tk.Frame):
         self.buttons = [None] * len(MENU)
 
         show_graphs = [
-            self.show_graph_1, self.show_graph_2, self.show_graph_3, self.show_graph_4, self.show_graph_5
+            self.show_graph_1, self.nytimes_cai, self.nytimes_num_articles, self.comparison_cai, self.show_graph_5
         ]
         for i in range(len(MENU)):
             self.options[i] = tk.Label(
@@ -105,30 +105,56 @@ class Application(tk.Frame):
         self.button_switch.pack(side=tk.BOTTOM)
 
     def show_graph_1(self):
-        if not self.graph_drawn:
-            self.draw_graph()
-        self.ax.clear() # clear current axes
         print('hello')
     
-    def show_graph_2(self):
+    def nytimes_cai(self):
         if not self.graph_drawn:
             self.draw_graph()
         self.ax.clear() # clear current axes
+        self.button_switch["command"] = self.science_daily_cai
         show_line_graph(self.ax, 'nytimes')
         self.canvas.draw()
     
-    def show_graph_3(self):
+    def science_daily_cai(self):
         if not self.graph_drawn:
             self.draw_graph()
         self.ax.clear() # clear current axes
+        self.button_switch["command"] = self.nytimes_cai
         show_line_graph(self.ax, 'science_daily_small')
         self.canvas.draw()
     
-    def show_graph_4(self):
+    def nytimes_num_articles(self):
         if not self.graph_drawn:
             self.draw_graph()
-        print("4")
+        self.ax.clear() # clear current axes
+        self.button_switch["command"] = self.science_daily_num_articles
+        show_line_graph(self.ax, 'nytimes', False)
+        self.canvas.draw()
     
+    def science_daily_num_articles(self):
+        if not self.graph_drawn:
+            self.draw_graph()
+        self.ax.clear() # clear current axes
+        self.button_switch["command"] = self.nytimes_num_articles
+        show_line_graph(self.ax, 'science_daily_small', False)
+        self.canvas.draw()
+    
+    def comparison_cai(self):
+        if not self.graph_drawn:
+            self.draw_graph()
+        self.ax.clear() # clear current axes
+        self.button_switch["command"] = self.comparison_num_articles
+        show_bar_graph(self.ax, 'nytimes', 'science_daily_small')
+        self.canvas.draw()
+    
+    def comparison_num_articles(self):
+        if not self.graph_drawn:
+            self.draw_graph()
+        self.ax.clear() # clear current axes
+        self.button_switch["command"] = self.comparison_cai
+        show_bar_graph(self.ax, 'nytimes', 'science_daily_small', False)
+        self.canvas.draw()
+
     def show_graph_5(self):
         if not self.graph_drawn:
             self.draw_graph()
