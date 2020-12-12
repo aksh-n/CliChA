@@ -13,6 +13,7 @@ from scrapy.utils.sitemap import Sitemap
 from scrapy.exceptions import CloseSpider
 
 if __package__ == 'clicha_scrapy.spiders':
+    # if called from Scrapy command line
     from clicha_scrapy.text_writer import TextWriter
 else:
     # import from parent directory
