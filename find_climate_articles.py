@@ -131,13 +131,12 @@ if __name__ == "__main__":
     # Hence, the processesing has already been done in advance (with the LEMMA attribute).
     # Running the above code will overwrite the previous data processing done by LEMMA attribute which
     # is slightly more accurate (but much more time consuming) than the default LOWER attribute.
-    # import python_ta
-    # python_ta.check_all(config={
-    #     'extra-imports': ['spaCy_helpers', 'find_climate_keywords', 'csv'],
-    #     'allowed-io': ['articles_process_yearly', 'articles_process', 'test_climate_aware'],
-    #     'max-line-length': 100,
-    #     'max-locals': 25,
-    #     # E9997: The h when using 'with open(...) as h' is a lowercase letter by convention.
-    #     'disable': ['R1705', 'C0200', 'E9997']
-    # })
-    pass
+    import python_ta
+    python_ta.check_all(config={
+        'extra-imports': ['spaCy_helpers', 'find_climate_keywords', 'csv'],
+        'allowed-io': ['articles_process_yearly', 'articles_process', 'test_climate_aware'],
+        'max-line-length': 100,
+        'max-locals': 25,
+        # E9997: The h when using 'with open(...) as h' is a lowercase letter by convention.
+        'disable': ['R1705', 'C0200', 'E9997']
+    })

@@ -143,7 +143,7 @@ requirements_old.txt
 test_plot.py
 misc_spaCy_helpers.py
 main_2.py
-climate_data/monthly_in_situ_co2_mlo.csv
+demo_nytimes.txt
 
 # log files for nytimes scraper
 nytimeslog/
