@@ -99,14 +99,22 @@ if __name__ == "__main__":
     # climate_files = ["un", "nasa"]
     # find_possible_keywords(climate_files)
     # final_keywords("un_nasa_keywords")
+    import doctest
+    doctest.testmod()
+
     import python_ta
     python_ta.check_all(config={
         'extra-imports': ['spaCy_helpers', 'collections', 'csv'],
         'allowed-io': [
             'find_idf_tstar', 'create_idf_dict', 'find_possible_keywords',
-            '_docs_from_climate_files', 'final_keywords'
+            '_docs_from_climate_files', 'final_keywords', 'python_ta.contracts'
         ],
         'max-line-length': 100,
         'max-locals': 25,
         'disable': ['R1705', 'C0200']
     })
+
+    import python_ta.contracts
+
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()

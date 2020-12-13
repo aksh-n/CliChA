@@ -166,12 +166,27 @@ if __name__ == "__main__":
     # fig, ax = plt.subplots()
     # demo_graph(ax, demo_processing_cai())
     # plt.show()
+    import doctest
+    doctest.testmod()
 
     import python_ta
     python_ta.check_all(config={
-        'extra-imports': ['collections', 'csv', 'matplotlib', 'matplotlib.axes', 'main_backend'],
+        'extra-imports': [
+            'collections',
+            'csv',
+            'matplotlib',
+            'matplotlib.axes',
+            'main_backend',
+            'python-ta.contracts'
+        ],
         'allowed-io': ['convert_to_plot_data', 'convert_keeling_data'],
         'max-line-length': 100,
         'max-locals': 25,
         'disable': ['R1705', 'C0200']
     })
+
+    # there seems to be a bug that is not allowing this to be executed properly
+    import python_ta.contracts
+
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()

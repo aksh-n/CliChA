@@ -31,7 +31,7 @@ def articles_process_yearly(dataset_name: str, year_start: int, year_end: int,
     row[0] is the index of the article
     row[1] is the number of distinct keywords matched in that article
     row[2] is the total number of keywords matched in that article
-    row[3] is a list of (keyword, number of times keyword occurred) pairs of that article 
+    row[3] is a list of (keyword, number of times keyword occurred) pairs of that article
 
     CAUTION: Passing 'LEMMA' as the attribute on the entirety of one of the datasets will cause the
     function to process for many hours (perhaps a day), and may even terminate in case RAM is
@@ -127,16 +127,26 @@ if __name__ == "__main__":
     # articles_process("nytimes", 1851, 2020)
     #
     # WARNING: The above code may take more than hour to process and with the LEMMA attribute,
-    # it may take an entire day. 
+    # it may take an entire day.
     # Hence, the processesing has already been done in advance (with the LEMMA attribute).
-    # Running the above code will overwrite the previous data processing done by LEMMA attribute which
-    # is slightly more accurate (but much more time consuming) than the default LOWER attribute.
+    # Running the above code will overwrite the previous data processing done by LEMMA attribute
+    # which is slightly more accurate (but much more time consuming) than the default LOWER
+    # attribute.
+
+    import doctest
+    doctest.testmod()
+
     import python_ta
     python_ta.check_all(config={
-        'extra-imports': ['spaCy_helpers', 'find_climate_keywords', 'csv'],
+        'extra-imports': ['spaCy_helpers', 'find_climate_keywords', 'csv', 'python_ta.contracts'],
         'allowed-io': ['articles_process_yearly', 'articles_process', 'test_climate_aware'],
         'max-line-length': 100,
         'max-locals': 25,
         # E9997: The h when using 'with open(...) as h' is a lowercase letter by convention.
         'disable': ['R1705', 'C0200', 'E9997']
     })
+
+    import python_ta.contracts
+
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()
