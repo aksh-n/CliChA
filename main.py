@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+"""Climate Change Awareness (CliChA), Main Module
+
+This module provides a graphical user interface (GUI) using tkinter.
+Runs a demo and provides visualizations relevant to the project.
+
+Copyright (c) 2020 Akshat Naik and Tony Hu.
+Licensed under the MIT License. See LICENSE in the project root for license information.
+"""
 import tkinter as tk
 import threading
 from climate_graphs import show_line_graph, show_bar_graph, demo_graph, co2_comparison_graph
