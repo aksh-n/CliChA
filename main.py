@@ -30,7 +30,7 @@ WIDTH = 1250
 HEIGHT = 800
 HEIGHT_WIDGET = 30
 MENU = [
-    '1. miniature scraping and processing + show graph',
+    '1. Demo scraping and processing with a graph',
     '2. A "Climate Awareness Index (CAI) vs Years" line graph for New York Times and Science Daily',
     '3. A "Number of Climate Aware Articles vs Years" line graph for New York Times and Science Daily',
     '4. A Comparison of Nytimes and Science Daily 1998-2020',
