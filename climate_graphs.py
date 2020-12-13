@@ -12,7 +12,7 @@ def convert_to_plot_data(filename: str) -> tuple:
     The second list consists of number of articles that tested climate-change positive, per year
     The third list consists of the Climate Awareness Index (CAI), per year
     """
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
         reader = csv.reader(f)
         yrs, num_articles, cai   = [], [], []
         for row in reader:
@@ -28,7 +28,7 @@ def convert_keeling_data() -> tuple:
     The first list consists of the years
     The second list consists of CO2 concentrations in micro-mol CO2 per mole (ppm)
     """
-    with open('climate_data/monthly_in_situ_co2_mlo.csv', 'r') as f:
+    with open('climate_data/monthly_in_situ_co2_mlo.csv', 'r', encoding='utf-8', errors='ignore') as f:
         reader = csv.reader(f)
         for _ in range(57):
             next(reader)
