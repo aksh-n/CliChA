@@ -14,6 +14,7 @@ from main_backend import run_demo_nytimes, demo_processing_cai
 
 # Importing matplotlib and required classes and functions to integrate graphs into tkinter GUI.
 import matplotlib
+from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.backend_bases import key_press_handler
 matplotlib.use("TkAgg")
@@ -31,6 +32,7 @@ MENU = [
 ]
 
 def create_app():
+    """Creates the Application."""
     root = tk.Tk()
     root.title("Climate Change Awareness")
     root.geometry(f"{WIDTH}x{HEIGHT}")
@@ -40,8 +42,9 @@ def create_app():
 
 
 def config_plot():
-    fig, ax = matplotlib.pyplot.subplots()
-    ax.set(xlabel = 'Year', ylabel = 'Climate Awareness Index (CAI)', title = 'Graph 1')
+    """Configures the plot and returns instances of Figure and Axes."""
+    fig, ax = plt.subplots()
+    # ax.set(xlabel = 'Year', ylabel = 'Climate Awareness Index (CAI)', title = 'Graph 1')
     return (fig, ax)
 
 
@@ -61,6 +64,7 @@ class Application(tk.Frame):
     
 
     def create_widgets(self):
+        """Creates all the starting widgets and places them in their respective places."""
         self.Frame1 = tk.Frame(self.master, bg = "pink")
         self.Frame1.place(x = 0, y = 0, height = HEIGHT_WIDGET * (len(MENU) + 2), width = WIDTH)
         self.create_menu_and_buttons()
@@ -75,6 +79,7 @@ class Application(tk.Frame):
         )
 
     def create_menu_and_buttons(self):
+        """Creates and places the menu and buttons."""
         self.intro = tk.Label(
             self.Frame1, text = "WELCOME! Here are a few options:", fg="white", bg="black",
             anchor="w", justify="left"
@@ -104,6 +109,7 @@ class Application(tk.Frame):
             self.buttons[i].config(font=("Courier", 15), command=show_graphs[i])
     
     def draw_graph(self):
+        """Initializes and draws an empty graph to draw on."""
         self.graph_drawn = True
         self.fig, self.ax = config_plot()
         self.graphIndex = 0
@@ -111,6 +117,7 @@ class Application(tk.Frame):
         self.config_window()
     
     def config_window(self):
+        """Configures the window to add Switch Graph Button Quit Buttons and a Toolbar."""
         toolbar = NavigationToolbar2Tk(self.canvas, self.Frame2)
         toolbar.update()
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
@@ -120,6 +127,7 @@ class Application(tk.Frame):
         self.button_switch.pack(side=tk.BOTTOM)
 
     def demo_start(self):
+        """Initializes the starting screen of the demo."""
         print("ZZZZZZZZZZZZZZZZZZZZZZZZ")
     #     if not self.graph_drawn:
     #         self.draw_graph()
@@ -136,6 +144,7 @@ class Application(tk.Frame):
     #     print("Done!")
     
     def nytimes_cai(self):
+        """Draws and displays the Climate Awareness Index (CAI) graph for New York Times."""
         if not self.graph_drawn:
             self.draw_graph()
         self._clear()
@@ -145,6 +154,7 @@ class Application(tk.Frame):
         self.canvas.draw()
     
     def science_daily_cai(self):
+        """Draws and displays the Climate Awareness Index (CAI) graph for Science Daily."""
         if not self.graph_drawn:
             self.draw_graph()
         self._clear()
@@ -154,6 +164,7 @@ class Application(tk.Frame):
         self.canvas.draw()
     
     def nytimes_num_articles(self):
+        """Draws and displays the Number of Climate Aware Articles graph for New York Times."""
         if not self.graph_drawn:
             self.draw_graph()
         self._clear()
@@ -163,6 +174,7 @@ class Application(tk.Frame):
         self.canvas.draw()
     
     def science_daily_num_articles(self):
+        """Draws and displays the Climate Awareness Index (CAI) graph for Science Daily."""
         if not self.graph_drawn:
             self.draw_graph()
         self._clear()
@@ -172,6 +184,8 @@ class Application(tk.Frame):
         self.canvas.draw()
     
     def comparison_cai(self):
+        """Draws and displays the Comparison of Climate Awareness Index (CAI) graph
+        for New York Times and Science Daily."""
         if not self.graph_drawn:
             self.draw_graph()
         self._clear()
@@ -181,6 +195,8 @@ class Application(tk.Frame):
         self.canvas.draw()
     
     def comparison_num_articles(self):
+        """Draws and displays the Comparison of Number of Climate Aware Articles graph
+        for New York Times and Science Daily."""
         if not self.graph_drawn:
             self.draw_graph()
         self._clear()
@@ -190,6 +206,8 @@ class Application(tk.Frame):
         self.canvas.draw()
 
     def co2_comparison_nytimes(self):
+        """Draws and displays the Comparison of Climate Awareness Index (CAI) graph
+        for New York Times and the CO2 concentrations in the World."""
         if not self.graph_drawn:
             self.draw_graph()
         self._clear()
@@ -200,6 +218,8 @@ class Application(tk.Frame):
         self.canvas.draw()
     
     def co2_comparison_science_daily(self):
+        """Draws and displays the Comparison of Climate Awareness Index (CAI) graph
+        for Science Daily and the CO2 concentrations in the World."""
         if not self.graph_drawn:
             self.draw_graph()
         self._clear()
@@ -210,10 +230,14 @@ class Application(tk.Frame):
         self.canvas.draw()
 
     def _clear(self):
+        """Clears the current figure."""
         self.fig.clear()
         self.ax = self.fig.add_subplot(111)
     
     def _quit(self):
+        """Quits the application."""
         self.Frame2.quit()
 
-create_app()
+
+if __name__ == "__main__":
+    create_app()
