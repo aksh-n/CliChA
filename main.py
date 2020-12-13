@@ -140,7 +140,6 @@ class Application(tk.Frame):
 
     def demo_start(self):
         """Initializes the starting screen of the demo."""
-        print("ZZZZZZZZZZZZZZZZZZZZZZZZ")
         if not self.graph_drawn:
             self.draw_graph()
         self._clear() # clear current axes
@@ -149,6 +148,7 @@ class Application(tk.Frame):
         self.button_switch["command"] = self.demo_scraping_processing_graph
 
     def demo_scraping_processing_graph(self):
+        """Demo scraping and processing."""
         self.demo_message["text"] = "Now Scraping, Please Wait. The program will freeze. DON'T PRESS ANY BUTTONS!"
         self.master.update()
         run_demo_nytimes()
