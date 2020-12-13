@@ -7,7 +7,8 @@ Copyright (c) 2020 Akshat Naik and Tony Hu.
 Licensed under the MIT License. See LICENSE in the project root for license information.
 """
 import os
-from scrapy.crawler import CrawlerProcess
+from twisted.internet import reactor
+from scrapy.crawler import CrawlerRunner
 from scrapy.utils.project import get_project_settings
 
 if __name__ != '__main__':
@@ -25,9 +26,16 @@ def run_spider() -> None:
     settings = get_project_settings()
     settings['SPIDER_MODULES'] = ['clicha_scrapy.clicha_scrapy.spiders']
     settings['NEWSPIDER_MODULE'] = ['clicha_scrapy.clicha_scrapy.spiders']
-    process = CrawlerProcess(settings)
-    process.crawl(NyTimesTextSpider, demo=True, start=2020, end=2020)
-    process.start()
+    settings['AUTOTHROTTLE_ENABLED'] = False
+
+    # clear content if file already exists
+    with open('demo_nytimes.txt', 'w', encoding='utf-8', errors='ignore'):
+        pass
+
+    runner = CrawlerRunner(settings)
+    d = runner.crawl(NyTimesTextSpider, demo=True, start=2020, end=2020)
+    d.addBoth(lambda _: reactor.stop())
+    reactor.run()
 
 
 if __name__ == '__main__':
@@ -48,6 +56,7 @@ if __name__ == '__main__':
                           'clicha_scrapy.clicha_scrapy.spiders.nytimes',
                           'random',
                           'typing',
+                          'builtins',
                           'os',
                           'sys',
                           'inspect',

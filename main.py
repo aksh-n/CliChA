@@ -7,17 +7,22 @@ Runs a demo and provides visualizations relevant to the project.
 Copyright (c) 2020 Akshat Naik and Tony Hu.
 Licensed under the MIT License. See LICENSE in the project root for license information.
 """
-import tkinter as tk
+from __future__ import annotations
+
 import threading
-from climate_graphs import show_line_graph, show_bar_graph, demo_graph, co2_comparison_graph
-from main_backend import run_demo_nytimes, demo_processing_cai
+import tkinter as tk
 
 # Importing matplotlib and required classes and functions to integrate graphs into tkinter GUI.
 import matplotlib
 from matplotlib import pyplot as plt
-from matplotlib.backends.backend_tkagg import (
-    FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.backend_bases import key_press_handler
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
+                                               NavigationToolbar2Tk)
+
+from climate_graphs import (co2_comparison_graph, demo_graph, show_bar_graph,
+                            show_line_graph)
+from main_backend import demo_processing_cai, run_demo_nytimes
+
 matplotlib.use("TkAgg")
 
 
@@ -75,6 +80,7 @@ class Application(tk.Frame):
         self.demo_message.place(
             x=0, y=(len(MENU) + 1) * HEIGHT_WIDGET, height=HEIGHT_WIDGET, width=WIDTH
         )
+
         self.Frame2 = tk.Frame(self.master, bg="pink1")
         self.Frame2.place(
             x=0, y=HEIGHT_WIDGET * (len(MENU) + 2),
@@ -135,19 +141,22 @@ class Application(tk.Frame):
     def demo_start(self):
         """Initializes the starting screen of the demo."""
         print("ZZZZZZZZZZZZZZZZZZZZZZZZ")
-    #     if not self.graph_drawn:
-    #         self.draw_graph()
-    #     self.ax.clear() # clear current axes
-    #     self.button_switch["text"] = "Start Demo!"
-    #     self.button_switch["command"] = threading.Thread(target=self.demo_scraping_processing_graph)
+        if not self.graph_drawn:
+            self.draw_graph()
+        self._clear() # clear current axes
+        self.button_switch["text"] = "Start Demo!"
+        # self.button_switch["command"] = threading.Thread(target=self.demo_scraping_processing_graph).start
+        self.button_switch["command"] = self.demo_scraping_processing_graph
 
-    # def demo_scraping_processing_graph(self):
-    #     self.demo_message["text"] = "Now Scraping, Please Wait."
-    #     threading.Thread(target=run_demo_nytimes()).start()
-    #     self.demo_message["text"] = "Now Processing, Please Wait."
-    #     threading.Thread(target=demo_graph(self.ax, demo_processing_cai())).start()
-    #     self.demo_message["text"] = ""
-    #     print("Done!")
+    def demo_scraping_processing_graph(self):
+        self.demo_message["text"] = "Now Scraping, Please Wait. The program will freeze. DON'T PRESS ANY BUTTONS!"
+        self.master.update()
+        run_demo_nytimes()
+        self.demo_message["text"] = "Now Processing, Please Wait. The program will freeze. DON'T PRESS ANY BUTTONS!"
+        self.master.update()
+        demo_graph(self.ax, demo_processing_cai())
+        self.demo_message["text"] = "Done. DO NOT PRESS Start Demo AGAIN! THIS CAN BE DONE ONLY ONCE PER PROGRAM RUN."
+        self.canvas.draw()
 
     def nytimes_cai(self):
         """Draws and displays the Climate Awareness Index (CAI) graph for New York Times."""
