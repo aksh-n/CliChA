@@ -177,7 +177,7 @@ if __name__ == "__main__":
             'matplotlib',
             'matplotlib.axes',
             'main_backend',
-            'python-ta.contracts'
+            'python_ta.contracts'
         ],
         'allowed-io': ['convert_to_plot_data', 'convert_keeling_data'],
         'max-line-length': 100,

@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     import python_ta
     python_ta.check_all(config={
-        'extra-imports': ['spaCy_helpers', 'collections', 'csv'],
+        'extra-imports': ['spaCy_helpers', 'collections', 'csv', 'python_ta.contracts'],
         'allowed-io': [
             'find_idf_tstar', 'create_idf_dict', 'find_possible_keywords',
             '_docs_from_climate_files', 'final_keywords', 'python_ta.contracts'
