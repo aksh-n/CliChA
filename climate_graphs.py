@@ -162,10 +162,6 @@ def co2_comparison_graph(ax: Axes, ax2: Axes, dataset_name: str) -> None:
 
 
 if __name__ == "__main__":
-    # import matplotlib.pyplot as plt
-    # fig, ax = plt.subplots()
-    # demo_graph(ax, demo_processing_cai())
-    # plt.show()
     import doctest
     doctest.testmod()
 
